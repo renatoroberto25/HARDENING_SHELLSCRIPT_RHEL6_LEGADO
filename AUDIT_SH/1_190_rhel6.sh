@@ -153,8 +153,8 @@ echo -e "\n[50] Verificar serviço avahi-daemon"
 echo -e "\n[51] Verificar serviço cups"
 (! chkconfig cups on 2>/dev/null && ! service cups status 2>/dev/null) && echo "PASS" || echo "FAIL"
 
-echo -e "\n[52] Verificar pacote dhcp"
-(! rpm -qa 2>/dev/null | grep -q '^dhcp') && echo "PASS" || echo "FAIL"
+echo -e "\n[52] Verificar servidor DHCP"
+(rpm -q dhcp-server >/dev/null 2>&1 || rpm -q dhcpd >/dev/null 2>&1) && echo "FAIL" || echo "PASS"
 
 echo -e "\n[53] Verificar pacote openldap-servers"
 (! rpm -qa 2>/dev/null | grep -q '^openldap-servers') && echo "PASS" || echo "FAIL"

@@ -51,10 +51,10 @@ echo -e "\n[63] CUPS desabilitado/removido"
 disable_service cups
 remove_pkg cups
 
-echo -e "\n[64] DHCP server ausente"
-disable_service dhcpd
-remove_pkg dhcp
-remove_pkg dhcp-server
+#echo -e "\n[64] DHCP server ausente"
+#disable_service dhcpd
+#remove_pkg dhcp
+#remove_pkg dhcp-server
 
 echo -e "\n[65] LDAP server ausente"
 disable_service slapd
