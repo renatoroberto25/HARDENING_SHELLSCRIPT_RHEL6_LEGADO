@@ -31,12 +31,9 @@ remove_pkg() {
 
     if ! pkg_installed "$pkg"; then
         echo "OK: $pkg nao instalado"
-        return
+    else
+        yum remove -y "$pkg" >/dev/null 2>&1 && echo "OK: $pkg removido" || echo "WARN: falha ao remover $pkg"
     fi
-
-    yum remove -y "$pkg" >/dev/null 2>&1 && \
-        echo "OK: $pkg removido" || \
-        echo "WARN: falha ao remover $pkg"
 }
 
 svc_exists() {
@@ -49,17 +46,21 @@ disable_service() {
     if svc_exists "$svc"; then
         service "$svc" stop >/dev/null 2>&1 || true
         chkconfig "$svc" off >/dev/null 2>&1 || true
+        echo "OK: $svc desabilitado"
+    else
+        echo "OK: $svc inexistente"
     fi
 }
 
 echo -e "\n[52] MAC SELinux ativo"
 if [ -f "$SELINUX_CONFIG" ]; then
     backup "$SELINUX_CONFIG"
-    set_config_key "$SELINUX_CONFIG" "SELINUX" "enforcing" && \
-        echo "OK: SELINUX=enforcing configurado" || \
+    if set_config_key "$SELINUX_CONFIG" "SELINUX" "enforcing"; then
+        echo "OK: SELINUX=enforcing configurado"
+    else
         echo "WARN: falha ao ajustar $SELINUX_CONFIG"
-
-    echo "INFO: nao aplicado setenforce 1 em runtime; em RHEL6/OL6 legado, validar labels e usar reboot/relabel quando necessario"
+    fi
+    echo "INFO: nao aplicado setenforce 1 em runtime; validar labels e usar reboot/relabel quando necessario"
 else
     echo "SKIP: $SELINUX_CONFIG nao encontrado"
 fi
@@ -67,23 +68,27 @@ fi
 echo -e "\n[53] Politica MAC definida"
 if [ -f "$SELINUX_CONFIG" ]; then
     backup "$SELINUX_CONFIG"
-    set_config_key "$SELINUX_CONFIG" "SELINUXTYPE" "targeted" && \
-        echo "OK: SELINUXTYPE=targeted configurado" || \
+    if set_config_key "$SELINUX_CONFIG" "SELINUXTYPE" "targeted"; then
+        echo "OK: SELINUXTYPE=targeted configurado"
+    else
         echo "WARN: falha ao ajustar $SELINUX_CONFIG"
+    fi
 else
     echo "SKIP: $SELINUX_CONFIG nao encontrado"
 fi
 
 echo -e "\n[54] Servicos unconfined_service_t"
-echo "INFO: remediacao depende do servico especifico; revisar saida do audit e aplicar politica SELinux apropriada"
+echo "INFO: remediacao manual; depende do servico especifico"
 
 echo -e "\n[55] Processos unconfined_t"
-echo "INFO: remediacao depende do processo especifico; revisar saida do audit e aplicar politica SELinux apropriada"
+echo "INFO: remediacao manual; depende do processo especifico"
 
 echo -e "\n[56] Prelink removido"
 if pkg_installed prelink; then
     if command -v prelink >/dev/null 2>&1; then
-        prelink -ua >/dev/null 2>&1 || echo "WARN: falha ao desfazer prelink; seguindo com remocao do pacote"
+        prelink -ua >/dev/null 2>&1 || echo "WARN: falha ao desfazer prelink"
+    else
+        echo "OK: binario prelink ausente"
     fi
     remove_pkg prelink
 else
