@@ -1,0 +1,87 @@
+
+renato@fedora:~$ ssh 192.168.56.29
+Register this system with Red Hat Insights: insights-client --register
+Create an account or view all your systems at https://red.ht/insights-dashboard
+Last login: Fri Mar  6 12:13:25 2026 from 192.168.56.1
+[renato@rhel-9-20260305 ~]$ sudo su
+[sudo] password for renato: 
+[root@rhel-9-20260305 renato]# chmod -R +x rhel_based_8_9_hardening_full/
+[root@rhel-9-20260305 renato]# cd rhel_based_8_9_hardening_full/
+[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# ./executor.sh 
+1) Audit
+2) Remediação
+3) Full (Audit → Remed → Audit)
+4) Itens não remediados (último audit-post)
+Escolha: 3
+=== AUDIT PRÉ ===
+1_203.sh                       PASS(102) FAIL(100)
+
+Resumo:
+PASS : 102
+FAIL : 100
+Aderência: 50%
+
+=== REMEDIAÇÃO ===
+1-24.sh                        OK
+35-43.sh                       OK
+44-48.sh                       OK
+49-51.sh                       OK
+52-57.sh                       OK
+58-60.sh                       OK
+61-86.sh                       OK
+87-88.sh                       OK
+89-90.sh                       OK
+91-99.sh                       OK
+100-101.sh                     OK
+102.sh                         OK
+103-107.sh                     OK
+108.sh                         OK
+109-129.sh                     OK
+130-147.sh                     OK
+148-160.sh                     OK
+161-184.sh                     OK
+185-194.sh                     OK
+195-203.sh                     OK
+
+=== AUDIT PÓS ===
+1_203.sh                       PASS(173) FAIL(29 )
+
+Resumo:
+PASS : 173
+FAIL : 29
+Aderência: 85%
+
+Comparativo:
+Antes : PASS 102 | FAIL 100
+Depois: PASS 173 | FAIL 29
+Melhoria em 71 controles
+
+Logs:
+PRE  : /home/renato/rhel_based_8_9_hardening_full/logs/audit/audit-pre-rhel-9-20260305-20260306-121902.log
+REMED: /home/renato/rhel_based_8_9_hardening_full/logs/remed/remed-rhel-9-20260305-20260306-121902.log
+POST : /home/renato/rhel_based_8_9_hardening_full/logs/audit/audit-post-rhel-9-20260305-20260306-121902.log
+[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# reboot
+[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# Connection to 192.168.56.29 closed by remote host.
+Connection to 192.168.56.29 closed.
+renato@fedora:~$ ssh 192.168.56.29
+Register this system with Red Hat Insights: insights-client --register
+Create an account or view all your systems at https://red.ht/insights-dashboard
+Last login: Fri Mar  6 12:18:24 2026 from 192.168.56.1
+[renato@rhel-9-20260305 ~]$ sudo su
+[sudo] password for renato: 
+[root@rhel-9-20260305 renato]# cd rhel_based_8_9_hardening_full/
+[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# ./executor.sh 
+1) Audit
+2) Remediação
+3) Full (Audit → Remed → Audit)
+4) Itens não remediados (último audit-post)
+Escolha: 1
+=== AUDIT ===
+1_203.sh                       PASS(171) FAIL(31 )
+
+Resumo:
+PASS : 171
+FAIL : 31
+Aderência: 84%
+Log: /home/renato/rhel_based_8_9_hardening_full/logs/audit/audit-rhel-9-20260305-20260306-122044.log
+[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# 

@@ -1,0 +1,203 @@
+ID 1 - Verifique se o módulo do kernel do CRAMFS não está disponível
+ID 2 - Verifique se o módulo do kernel do SQUASHFS não está disponível
+ID 3 - Verifique se o módulo do kernel do UDF não está disponível
+ID 4 - Verifique se o módulo do kernel do HFS não está disponível
+ID 5 - Verifique se o módulo do kernel do HFSPLUS não está disponível
+ID 6 - Verifique se o módulo do kernel do JFFS2 não está disponível
+ID 7 - Verifique se o módulo do kernel do FREEVXFS não está disponível
+ID 8 - Verifique se o módulo do kernel do OVERLAY não está disponível
+ID 9 - Verifique se o módulo do kernel do USB-STORAGE não está disponível
+ID 10 - Verifique se o módulo do kernel do DCCP não está disponível
+ID 11 - Verifique se o módulo do kernel do SCTP não está disponível
+ID 12 - Verifique se o módulo do kernel do RDS não está disponível
+ID 13 - Verifique se o módulo do kernel do TIPC não está disponível
+ID 14 - Verifique se core dumps estão restritos
+ID 15 - Verifique se ptrace_scope está restrito
+ID 16 - Verifique se NX/XD está ativo
+ID 17 - Verifique se ASLR está habilitado
+ID 18 - Verifique se IOMMU está ativo
+ID 19 - Verifique se perf_event está restrito
+ID 20 - Verifique se dmesg está restrito
+ID 21 - Verifique se user namespace está desabilitado
+ID 22 - Verifique se protected_symlinks está habilitado
+ID 23 - Verifique se protected_hardlinks está habilitado
+ID 24 - Verifique se suid_dumpableigual a0
+ID 25 - Partição dedicada para /tmp
+ID 26 - Partição dedicada para /dev/shm
+ID 27 - Partição dedicada para /var
+ID 28 - Partição dedicada para /var/tmp
+ID 29 - Partição dedicada para /var/log
+ID 30 - Partição dedicada para /var/log/audit
+ID 31 - Partição dedicada para /home
+ID 32 - Partição dedicada para /historico
+ID 33 - Partição dedicada para /crash
+ID 34 - Partição dedicada para /UNIX
+ID 35 - Montagem segura de partições e mídia removível
+ID 36 - Opções de montagem seguras em partições críticas
+ID 37 - Opções de montagem seguras em /tmp
+ID 38 - Opções de montagem seguras em /dev/shm
+ID 39 - Opções de montagem seguras em /var/tmp
+ID 40 - Opções de montagem seguras em /var/log
+ID 41 - Opções de montagem seguras em /var/log/audit
+ID 42 - Opções de montagem seguras em /home
+ID 43 - Opções de montagem seguras em mídias removíveis
+ID 44 - Sticky bit em diretórios world-writable
+ID 45 - Sticky bit em /tmp
+ID 46 - Sticky bit em /var/tmp
+ID 47 - Sticky bit em /dev/shm
+ID 48 - Autofs desabilitado
+ID 49 - Senha de bootloader configurada
+ID 50 - Permissões seguras no arquivo do bootloader
+ID 51 - Single user mode com autenticação
+ID 52 - MAC (SELinux/AppArmor) ativo
+ID 53 - Política MAC definida
+ID 54 - Serviços unconfined minimizados (Manual)
+ID 55 - Sem serviços sem restrições MAC (Manual)
+ID 56 - Prelink removido
+ID 57 - xinetd removido
+ID 58 - Sincronização de tempo em uso
+ID 59 - Chrony configurado
+ID 60 - NTP configurado
+ID 61 - X11 ausente
+ID 62 - Avahi ausente
+ID 63 - CUPS ausente
+ID 64 - DHCP server ausente
+ID 65 - LDAP server ausente
+ID 66 - DNS server ausente
+ID 67 - FTP server ausente
+ID 68 - HTTP server ausente
+ID 69 - IMAP/POP3 server ausente
+ID 70 - Samba ausente
+ID 71 - Proxy HTTP ausente
+ID 72 - SNMP ausente
+ID 73 - NIS server ausente
+ID 74 - Telnet server ausente
+ID 75 - MTA em modo local-only
+ID 76 - NFS server controlado
+ID 77 - rpcbind controlado
+ID 78 - rsync daemon controlado
+ID 79 - Cliente NIS ausente
+ID 80 - Cliente rsh ausente
+ID 81 - Cliente talk ausente
+ID 82 - Cliente telnet ausente
+ID 83 - Cliente LDAP ausente
+ID 84 - Serviços não essenciais removidos/mascarados
+ID 85 - TFTP server removido
+ID 86 - PolicyKit endurecido
+ID 87 - Assinaturas de pacotes habilitadas
+ID 88 - Patches de segurança aplicados - USO APENAS EM TEMPLATES
+ID 89 - Apenas um daemon de time sync
+ID 90 - Cron/at seguros e restritos
+ID 91 - IP forwarding desabilitado
+ID 92 - Redirecionamentos de pacotes desabilitados
+ID 93 - Source-routed packets bloqueados
+ID 94 - ICMP redirects bloqueados
+ID 95 - Reverse path filtering habilitado
+ID 96 - ICMP broadcast ignorado
+ID 97 - Respostas ICMP inválidas ignoradas
+ID 98 - TCP SYN cookies habilitados
+ID 99 - IPv6 desabilitado ou endurecido
+ID 100 - ICMP timestamp-request drop
+ID 101 - ICMP timestamp-reply drop
+ID 102 - Wireless/Bluetooth desabilitados
+ID 103 - Firewall com política default deny
+ID 104 - Apenas uma solução de firewall ativa
+ID 105 - Firewall ativo
+ID 106 - Zona padrão definida
+ID 107 - Configuração permanente do firewall
+ID 108 - TLS mínimo 1.2/1.3
+ID 109 - Permissões seguras em sshd_config e chaves
+ID 110 - Controle de acesso via Allow/Deny
+ID 111 - LogLevel adequado
+ID 112 - X11Forwarding desabilitado
+ID 113 - MaxAuthTries limitado
+ID 114 - IgnoreRhosts habilitado
+ID 115 - HostbasedAuthentication desabilitado
+ID 116 - PermitRootLogin restrito/desabilitado
+ID 117 - PermitEmptyPasswords desabilitado
+ID 118 - PermitUserEnvironment desabilitado
+ID 119 - UsePAM habilitado
+ID 120 - Idle timeout configurado
+ID 121 - LoginGraceTime curto
+ID 122 - MaxStartups/MaxSessions limitados
+ID 123 - AllowTcpForwarding restrito
+ID 124 - Banner legal configurado
+ID 125 - Ciphers fortes
+ID 126 - MACs fortes
+ID 127 - KexAlgorithms fortes
+ID 128 - Preferência moderna - double check
+ID 129 - ForceCommand/Chroot
+ID 130 - pwquality habilitado
+ID 132 - pam_faillock habilitado
+ID 133 - pam_tally2 NÃO deve existir em RHEL 8/9
+ID 134 - pam_pwhistory habilitado
+ID 135 - minlen maior igual a  14
+ID 136 - minclass maior igual a  4
+ID 137 - maxrepeat & maxsequence igual a 3
+ID 138 - dictcheck diferente de  0
+ID 139 - Hashing sha512/yescrypt
+ID 140 - pwhistory remember maior igual a  5
+ID 141 - deny maior igual a  5 (faillock)deny igual a 5
+ID 142 - unlock_time maior igual a  900 unlock_time igual a 900
+ID 143 - PASS_MAX_DAYS menor igual a 365
+ID 144 - PASS_MIN_DAYS maior igual a  1
+ID 145 - PASS_WARN_AGE maior igual a  7
+ID 146 - inactive maior igual a  30 (para contas válidas)
+ID 147 - campo 3 diferente de  0
+ID 148 - Root é o único UID 0
+ID 149 - Root é o único GID 0
+ID 150 - Contas de sistema com shell interativo
+ID 151 - /sbin/nologin presente em /etc/shells
+ID 152 - PATH do root configurado
+ID 153 - umask 027
+ID 154 - TMOUT 900
+ID 155 - Ausência de regras amplas sudo
+ID 156 - sudo usa pty
+ID 157 - sudo logfile
+ID 158 - !authenticate ausente
+ID 159 - timestamp_timeoutigual a5
+ID 160 - su restrito ao wheel
+ID 161 - Stack de logs racionalizado
+ID 162 - Journald configurado persistente
+ID 163 - Rsyslog instalado e ativo
+ID 164 - Logrotate para rsyslog
+ID 165 - auditd instalado e rodando
+ID 166 - Auditoria antes do auditd
+ID 167 - Tamanho de armazenamento de audit log
+ID 168 - Logs de auditoria não excluídos automaticamente
+ID 169 - Auditoria de alterações em data/hora
+ID 170 - Auditoria de alterações em contas/grupos
+ID 171 - Auditoria de alterações no ambiente de rede
+ID 172 - Auditoria de eventos MAC
+ID 173 - Auditoria de login/logout
+ID 174 - Auditoria de permissões DAC
+ID 175 - Auditoria de acessos não autorizados
+ID 176 - Auditoria de comandos privilegiados
+ID 177 - Auditoria de mount/unmount
+ID 178 - Auditoria de deleção de arquivos
+ID 179 - Auditoria de kernel modules
+ID 180 - Auditoria de sudoers/logs de sudo
+ID 181 - Configuração de auditoria imutável
+ID 182 - AIDE instalado e inicializado
+ID 183 - Verificação de integridade agendada
+ID 184 - Proteção dos binários de auditoria
+ID 185 - Verificar permissões de /etc/passwd
+ID 186 - Verificar permissões de /etc/passwd-
+ID 187 - Verificar permissões de /etc/shadow
+ID 188 - Verificar permissões de /etc/shadow-
+ID 189 - Verificar permissões de /etc/gshadow-
+ID 190 - Verificar permissões de /etc/gshadow
+ID 191 - Verificar permissões de /etc/group
+ID 192 - Verificar permissões de /etc/group-
+ID 193 - Verificar se contas usam shell nologin
+ID 194 - Verificar permissões de /etc/security/opasswd
+ID 195 - Verificar existência de arquivos órfãos (UID/GID sem dono)
+ID 196 - Verificar world-writable fora de áreas permitidas
+ID 197 - Verificar arquivos/diretórios sem owner ou group
+ID 198 - Verificar binários SUID/SGID indevidos
+ID 199 - Verificar se usuários possuem diretório home válido)
+ID 200 - Verificar ownership das homes dos usuários
+ID 201 - Verificar permissões das homes (<igual a750)
+ID 202 - Verificar dotfiles inseguros nas homes
+ID 203 - Verificar arquivos .forward/.netrc/.rhosts nas homes
+ID 203 - Verificar arquivos .forward/.netrc/.rhosts nas homes
