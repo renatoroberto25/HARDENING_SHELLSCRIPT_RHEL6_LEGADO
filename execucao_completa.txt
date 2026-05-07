@@ -1,87 +1,686 @@
+[root@oracle-6-20260507 HARDENING_SHELLSCRIPT_RHEL6_LEGADO]# ./executor.sh 
 
-renato@fedora:~$ ssh 192.168.56.29
-Register this system with Red Hat Insights: insights-client --register
-Create an account or view all your systems at https://red.ht/insights-dashboard
-Last login: Fri Mar  6 12:13:25 2026 from 192.168.56.1
-[renato@rhel-9-20260305 ~]$ sudo su
-[sudo] password for renato: 
-[root@rhel-9-20260305 renato]# chmod -R +x rhel_based_8_9_hardening_full/
-[root@rhel-9-20260305 renato]# cd rhel_based_8_9_hardening_full/
-[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# ./executor.sh 
+============================================================
+HARDENING RHEL6 - MENU
+============================================================
 1) Audit
-2) Remediação
-3) Full (Audit → Remed → Audit)
-4) Itens não remediados (último audit-post)
-Escolha: 3
-=== AUDIT PRÉ ===
-1_203.sh                       PASS(102) FAIL(100)
+2) Remediacao
+3) Full (Audit -> Remed -> Audit)
+4) Itens em FAIL (ultimo audit)
+5) Status do ultimo audit
+0) Sair
 
-Resumo:
-PASS : 102
-FAIL : 100
-Aderência: 50%
-
-=== REMEDIAÇÃO ===
-1-24.sh                        OK
-35-43.sh                       OK
-44-48.sh                       OK
-49-51.sh                       OK
-52-57.sh                       OK
-58-60.sh                       OK
-61-86.sh                       OK
-87-88.sh                       OK
-89-90.sh                       OK
-91-99.sh                       OK
-100-101.sh                     OK
-102.sh                         OK
-103-107.sh                     OK
-108.sh                         OK
-109-129.sh                     OK
-130-147.sh                     OK
-148-160.sh                     OK
-161-184.sh                     OK
-185-194.sh                     OK
-195-203.sh                     OK
-
-=== AUDIT PÓS ===
-1_203.sh                       PASS(173) FAIL(29 )
-
-Resumo:
-PASS : 173
-FAIL : 29
-Aderência: 85%
-
-Comparativo:
-Antes : PASS 102 | FAIL 100
-Depois: PASS 173 | FAIL 29
-Melhoria em 71 controles
-
-Logs:
-PRE  : /home/renato/rhel_based_8_9_hardening_full/logs/audit/audit-pre-rhel-9-20260305-20260306-121902.log
-REMED: /home/renato/rhel_based_8_9_hardening_full/logs/remed/remed-rhel-9-20260305-20260306-121902.log
-POST : /home/renato/rhel_based_8_9_hardening_full/logs/audit/audit-post-rhel-9-20260305-20260306-121902.log
-[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# reboot
-[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# Connection to 192.168.56.29 closed by remote host.
-Connection to 192.168.56.29 closed.
-renato@fedora:~$ ssh 192.168.56.29
-Register this system with Red Hat Insights: insights-client --register
-Create an account or view all your systems at https://red.ht/insights-dashboard
-Last login: Fri Mar  6 12:18:24 2026 from 192.168.56.1
-[renato@rhel-9-20260305 ~]$ sudo su
-[sudo] password for renato: 
-[root@rhel-9-20260305 renato]# cd rhel_based_8_9_hardening_full/
-[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# ./executor.sh 
-1) Audit
-2) Remediação
-3) Full (Audit → Remed → Audit)
-4) Itens não remediados (último audit-post)
 Escolha: 1
-=== AUDIT ===
-1_203.sh                       PASS(171) FAIL(31 )
+
+============================================================
+AUDIT
+Host : oracle-6-20260507
+Data : 2026-05-07 13:28:07
+SO   : Red Hat Enterprise Linux Server release 6.10 (Santiago)
+============================================================
+1_203_rhel6.sh                 PASS(97 ) FAIL(105)
 
 Resumo:
-PASS : 171
-FAIL : 31
-Aderência: 84%
-Log: /home/renato/rhel_based_8_9_hardening_full/logs/audit/audit-rhel-9-20260305-20260306-122044.log
-[root@rhel-9-20260305 rhel_based_8_9_hardening_full]# 
+TOTAL: 202
+PASS : 97
+FAIL : 105
+Aderência: 48%
+Log: /home/vagrant/HARDENING_SHELLSCRIPT_RHEL6_LEGADO/logs/audit/audit-oracle-6-20260507-20260507-132805.log
+
+Pressione ENTER para voltar ao menu...
+
+============================================================
+HARDENING RHEL6 - MENU
+============================================================
+1) Audit
+2) Remediacao
+3) Full (Audit -> Remed -> Audit)
+4) Itens em FAIL (ultimo audit)
+5) Status do ultimo audit
+0) Sair
+
+Escolha: 2
+
+============================================================
+REMEDIACAO
+Host : oracle-6-20260507
+Data : 2026-05-07 13:28:14
+SO   : Red Hat Enterprise Linux Server release 6.10 (Santiago)
+============================================================
+1-24.sh                        OK(15 ) WARN(0  ) SKIP(6  ) INFO(0  ) RC(0)
+35-43.sh                       OK(2  ) WARN(0  ) SKIP(9  ) INFO(0  ) RC(0)
+44-48.sh                       OK(4  ) WARN(0  ) SKIP(0  ) INFO(0  ) RC(0)
+49-51.sh                       OK(2  ) WARN(0  ) SKIP(1  ) INFO(0  ) RC(0)
+52-57.sh                       OK(4  ) WARN(0  ) SKIP(0  ) INFO(3  ) RC(0)
+58-60.sh                       OK(4  ) WARN(0  ) SKIP(0  ) INFO(0  ) RC(0)
+61-86.sh                       OK(52 ) WARN(0  ) SKIP(0  ) INFO(1  ) RC(0)
+87-88.sh                       OK(3  ) WARN(0  ) SKIP(0  ) INFO(1  ) RC(0)
+89-90.sh                       OK(3  ) WARN(0  ) SKIP(0  ) INFO(0  ) RC(0)
+91-99.sh                       OK(17 ) WARN(0  ) SKIP(0  ) INFO(0  ) RC(0)
+100-101.sh                     OK(2  ) WARN(0  ) SKIP(0  ) INFO(0  ) RC(0)
+102.sh                         OK(3  ) WARN(0  ) SKIP(0  ) INFO(0  ) RC(0)
+103-107.sh                     OK(3  ) WARN(1  ) SKIP(0  ) INFO(1  ) RC(0)
+108.sh                         OK(0  ) WARN(0  ) SKIP(1  ) INFO(3  ) RC(0)
+109-129.sh                     OK(23 ) WARN(0  ) SKIP(0  ) INFO(2  ) RC(0)
+130-147.sh                     OK(10 ) WARN(0  ) SKIP(0  ) INFO(0  ) RC(0)
+148-160.sh                     OK(11 ) WARN(0  ) SKIP(0  ) INFO(0  ) RC(0)
+161-184.sh                     OK(9  ) WARN(0  ) SKIP(1  ) INFO(1  ) RC(0)
+185-194.sh                     OK(11 ) WARN(0  ) SKIP(0  ) INFO(0  ) RC(0)
+195-203.sh                     OK(6  ) WARN(11 ) SKIP(0  ) INFO(1  ) RC(0)
+
+Resumo remediacao:
+OK   : 184
+WARN : 12
+SKIP : 18
+INFO : 13
+ERRO : 0
+Log: /home/vagrant/HARDENING_SHELLSCRIPT_RHEL6_LEGADO/logs/remed/remed-oracle-6-20260507-20260507-132805.log
+
+Pressione ENTER para voltar ao menu...
+
+============================================================
+HARDENING RHEL6 - MENU
+============================================================
+1) Audit
+2) Remediacao
+3) Full (Audit -> Remed -> Audit)
+4) Itens em FAIL (ultimo audit)
+5) Status do ultimo audit
+0) Sair
+
+Escolha: 1
+
+============================================================
+AUDIT
+Host : oracle-6-20260507
+Data : 2026-05-07 13:28:47
+SO   : Red Hat Enterprise Linux Server release 6.10 (Santiago)
+============================================================
+1_203_rhel6.sh                 PASS(175) FAIL(27 )
+
+Resumo:
+TOTAL: 202
+PASS : 175
+FAIL : 27
+Aderência: 86%
+Log: /home/vagrant/HARDENING_SHELLSCRIPT_RHEL6_LEGADO/logs/audit/audit-oracle-6-20260507-20260507-132805.log
+
+Pressione ENTER para voltar ao menu...
+
+============================================================
+HARDENING RHEL6 - MENU
+============================================================
+1) Audit
+2) Remediacao
+3) Full (Audit -> Remed -> Audit)
+4) Itens em FAIL (ultimo audit)
+5) Status do ultimo audit
+0) Sair
+
+Escolha: 0
+
+
+[root@oracle-6-20260507 HARDENING_SHELLSCRIPT_RHEL6_LEGADO]# ls -lR logs/remed/
+logs/remed/:
+total 16
+-rw-r--r--. 1 vagrant vagrant 14914 May  7 13:28 remed-oracle-6-20260507-20260507-132805.log
+[root@oracle-6-20260507 HARDENING_SHELLSCRIPT_RHEL6_LEGADO]# cat logs/remed/remed-oracle-6-20260507-20260507-132805.log 
+
+### 1-24.sh
+[HARDENING] Remediacoes 1-24 (Kernel e Sysctl - RHEL6/OL6)
+[1-13] Bloquear modulos de kernel quando presentes
+OK: modulo bloqueado cramfs
+OK: modulo bloqueado squashfs
+OK: modulo bloqueado udf
+OK: modulo bloqueado hfs
+OK: modulo bloqueado hfsplus
+OK: modulo bloqueado jffs2
+OK: modulo bloqueado freevxfs
+OK: modulo bloqueado overlay
+OK: modulo bloqueado usb_storage
+OK: modulo bloqueado dccp
+OK: modulo bloqueado sctp
+OK: modulo bloqueado rds
+OK: modulo bloqueado tipc
+[14-15] Restringir core dumps e suid_dumpable
+SKIP: fs.suid_dumpable nao suportado neste kernel
+OK: limites de core dump configurados
+[16] NX/XD
+OK: CPU informa suporte a NX
+[17-18] ASLR completo
+SKIP: kernel.randomize_va_space nao suportado neste kernel
+[19-20] perf_event restrito quando suportado
+SKIP: kernel.perf_event_paranoid nao suportado neste kernel
+[21] dmesg restrito quando suportado
+SKIP: kernel.dmesg_restrict nao suportado neste kernel
+[22-23] protected_symlinks quando suportado
+SKIP: fs.protected_symlinks nao suportado neste kernel
+[24] protected_hardlinks quando suportado
+SKIP: fs.protected_hardlinks nao suportado neste kernel
+OK
+
+### 35-43.sh
+[35-43] Remediacao de opcoes de montagem seguras (RHEL6/OL6)
+[35] Midias removiveis no fstab
+SKIP: /media sem entrada em /etc/fstab
+SKIP: /run/media sem entrada em /etc/fstab
+[36] Particoes criticas
+SKIP: /var sem entrada em /etc/fstab
+[37] /tmp
+SKIP: /tmp sem entrada em /etc/fstab
+[38] /dev/shm
+OK: /dev/shm remount com nodev,nosuid,noexec
+[39] /var/tmp
+SKIP: /var/tmp sem entrada em /etc/fstab
+[40] /var/log
+SKIP: /var/log sem entrada em /etc/fstab
+[41] /var/log/audit
+SKIP: /var/log/audit sem entrada em /etc/fstab
+[42] /home
+OK: /home remount com nodev
+[43] Midias removiveis
+SKIP: /media sem entrada em /etc/fstab
+SKIP: /run/media sem entrada em /etc/fstab
+OK
+
+### 44-48.sh
+[44-48] Remediacao: sticky bit e autofs (RHEL6/OL6)
+[44] Aplicar sticky bit em diretorios world-writable
+[45] Sticky bit em /tmp
+OK: /tmp ja contem sticky bit
+[46] Sticky bit em /var/tmp
+OK: /var/tmp ja contem sticky bit
+[47] Sticky bit em /dev/shm
+OK: /dev/shm ja contem sticky bit
+[48] Desabilitar autofs
+OK: autofs nao instalado
+OK
+
+### 49-51.sh
+[49-51] Remediacao: bootloader e single user mode (RHEL6/OL6)
+
+[49] Senha no GRUB Legacy
+SKIP: informe GRUB_MD5_PASSWORD com hash gerado por grub-md5-crypt
+
+[50] Permissoes seguras no grub.conf
+OK: /boot/grub/grub.conf ajustado para 600 root:root
+
+[51] Single user mode com autenticacao SysV
+OK: SINGLE=/sbin/sulogin configurado
+OK
+
+### 52-57.sh
+[52-57] Remediacao: MAC, prelink e xinetd (RHEL6/OL6)
+
+[52] MAC SELinux ativo
+OK: SELINUX=enforcing configurado
+INFO: nao aplicado setenforce 1 em runtime; em RHEL6/OL6 legado, validar labels e usar reboot/relabel quando necessario
+
+[53] Politica MAC definida
+OK: SELINUXTYPE=targeted configurado
+
+[54] Servicos unconfined_service_t
+INFO: remediacao depende do servico especifico; revisar saida do audit e aplicar politica SELinux apropriada
+
+[55] Processos unconfined_t
+INFO: remediacao depende do processo especifico; revisar saida do audit e aplicar politica SELinux apropriada
+
+[56] Prelink removido
+OK: prelink nao instalado
+
+[57] xinetd removido
+OK: xinetd nao instalado
+OK
+
+### 58-60.sh
+[58-60] Remediacao: sincronizacao de tempo ntpd (RHEL6/OL6)
+
+[58] ntpd ativo
+OK: pacote ntp instalado
+OK: ntpd iniciado
+
+[59] Fontes NTP confiaveis
+OK: /etc/ntp.conf ja possui fonte de tempo
+
+[60] ntpd no boot
+OK: ntpd habilitado no boot
+OK
+
+### 61-86.sh
+[61-86] Remediacao: servicos e clientes desnecessarios (RHEL6/OL6)
+
+[61] X11 removido
+OK: xorg-x11-server-common nao instalado
+OK: xorg-x11-server-Xorg nao instalado
+
+[62] Avahi desabilitado/removido
+OK: servico nao encontrado: avahi-daemon
+OK: avahi nao instalado
+
+[63] CUPS desabilitado/removido
+OK: servico nao encontrado: cups
+OK: cups nao instalado
+
+[64] DHCP server ausente
+OK: servico nao encontrado: dhcpd
+OK: dhcp nao instalado
+OK: dhcp-server nao instalado
+
+[65] LDAP server ausente
+OK: servico nao encontrado: slapd
+OK: openldap-servers nao instalado
+
+[66] DNS server ausente
+OK: servico nao encontrado: named
+OK: bind nao instalado
+
+[67] FTP server ausente
+OK: servico nao encontrado: vsftpd
+OK: vsftpd nao instalado
+
+[68] HTTP server ausente
+OK: servico nao encontrado: httpd
+OK: httpd nao instalado
+
+[69] IMAP/POP3 server ausente
+OK: servico nao encontrado: dovecot
+OK: dovecot nao instalado
+
+[70] Samba ausente
+OK: servico nao encontrado: smb
+OK: servico nao encontrado: nmb
+OK: samba nao instalado
+
+[71] Proxy HTTP ausente
+OK: servico nao encontrado: squid
+OK: squid nao instalado
+
+[72] SNMP desabilitado/removido
+OK: servico nao encontrado: snmpd
+OK: net-snmp nao instalado
+
+[73] NIS server ausente
+OK: servico nao encontrado: ypserv
+OK: ypserv nao instalado
+
+[74] Telnet server ausente
+OK: servico nao encontrado: telnet
+OK: telnet-server nao instalado
+
+[75] MTA em modo local-only
+OK: postfix ajustado para loopback-only
+
+[76] NFS server desabilitado
+OK: servico nao encontrado: nfs
+OK: servico nao encontrado: nfslock
+
+[77] rpcbind desabilitado
+OK: servico nao encontrado: rpcbind
+
+[78] rsync daemon desabilitado
+OK: servico desabilitado: rsync
+OK: rsync via xinetd desabilitado
+
+[79] Cliente NIS removido
+OK: servico nao encontrado: ypbind
+OK: ypbind nao instalado
+
+[80] Cliente rsh removido
+OK: rsh nao instalado
+
+[81] Cliente talk removido
+OK: talk nao instalado
+
+[82] Cliente telnet removido
+OK: pacote removido: telnet
+
+[83] Cliente LDAP removido
+OK: openldap-clients nao instalado
+
+[84] Servicos superfluos SysV
+OK: servico nao encontrado: avahi-daemon
+OK: servico nao encontrado: cups
+OK: servico nao encontrado: telnet
+OK: servico nao encontrado: vsftpd
+OK: servico nao encontrado: xinetd
+OK: servico nao encontrado: tftp
+OK: servico nao encontrado: ypserv
+OK: servico nao encontrado: ypbind
+
+[85] TFTP server removido
+OK: servico nao encontrado: tftp
+OK: tftp-server nao instalado
+
+[86] PolicyKit RHEL6 seguro
+INFO: PolicyKit legado usa regras pkla; revisar concessoes ResultActive=yes conforme politica aprovada
+OK
+
+### 87-88.sh
+[87-88] Remediacao: yum gpgcheck e patches (RHEL6/OL6)
+
+[87] Assinaturas de pacotes habilitadas
+OK: yum.conf ajustado
+OK: gpgcheck habilitado em /etc/yum.repos.d/oracle-linux-ol6.repo
+OK: gpgcheck habilitado em /etc/yum.repos.d/uek-ol6.repo
+
+[88] Patches de seguranca aplicados
+INFO: yum update --security nao aplicado; pode exigir repos/plugin yum-security ou janela manual
+OK
+
+### 89-90.sh
+[89-90] Remediacao: time sync unico e cron/at restritos (RHEL6/OL6)
+
+[89] Apenas ntpd como daemon de time sync
+OK: ntpd mantido como mecanismo de tempo
+
+[90] Cron/at seguros e restritos
+OK: /etc/cron.allow restrito
+OK: /etc/at.allow restrito
+OK
+
+### 91-99.sh
+[91-99] Remediacao: hardening de rede via sysctl (RHEL6/OL6)
+
+[91] IP forwarding desabilitado
+OK: net.ipv4.ip_forward = 0
+OK: net.ipv6.conf.all.forwarding = 0
+
+[92] Redirecionamentos de pacotes desabilitados
+OK: net.ipv4.conf.all.send_redirects = 0
+OK: net.ipv4.conf.default.send_redirects = 0
+
+[93] Source-routed packets bloqueados
+OK: net.ipv4.conf.all.accept_source_route = 0
+OK: net.ipv4.conf.default.accept_source_route = 0
+
+[94] ICMP redirects bloqueados
+OK: net.ipv4.conf.all.accept_redirects = 0
+OK: net.ipv4.conf.default.accept_redirects = 0
+OK: net.ipv4.conf.all.secure_redirects = 0
+OK: net.ipv4.conf.default.secure_redirects = 0
+
+[95] Reverse path filtering habilitado
+OK: net.ipv4.conf.all.rp_filter = 1
+OK: net.ipv4.conf.default.rp_filter = 1
+
+[96] ICMP broadcast ignorado
+OK: net.ipv4.icmp_echo_ignore_broadcasts = 1
+
+[97] Respostas ICMP invalidas ignoradas
+OK: net.ipv4.icmp_ignore_bogus_error_responses = 1
+
+[98] TCP SYN cookies habilitados
+OK: net.ipv4.tcp_syncookies = 1
+
+[99] IPv6 desabilitado ou endurecido
+OK: net.ipv6.conf.all.disable_ipv6 = 1
+OK: net.ipv6.conf.default.disable_ipv6 = 1
+OK
+
+### 100-101.sh
+[100-101] Remediacao: ICMP timestamp via iptables (RHEL6/OL6)
+
+[100] ICMP timestamp-request drop
+OK: DROP para ICMP timestamp-request
+
+[101] ICMP timestamp-reply drop
+OK: DROP para ICMP timestamp-reply
+OK
+
+### 102.sh
+[102] Remediacao: desabilitar Wireless/Bluetooth (RHEL6/OL6)
+OK: modulo nao carregado: bluetooth
+OK: modulo nao carregado: iwlwifi
+OK: blacklist persistente em /etc/modprobe.d/hardening-wireless.conf
+OK
+
+### 103-107.sh
+[103-107] Remediacao: firewall iptables (RHEL6/OL6)
+
+[103] Politica default deny
+OK: politicas basicas aplicadas com SSH preservado
+
+[104] Apenas iptables como firewall
+INFO: RHEL6 usa iptables; firewalld/nftables nao sao esperados
+
+[105] Firewall ativo
+OK: iptables iniciado
+
+[106] Politicas iptables definidas
+WARN: INPUT nao esta default deny
+
+[107] Configuracao permanente do firewall
+OK: regras salvas em /etc/sysconfig/iptables
+OK
+
+### 108.sh
+[108] Remediacao: TLS minimo por servico (RHEL6/OL6)
+INFO: RHEL6 nao possui update-crypto-policies global
+INFO: TLS deve ser configurado por servico quando suportado
+INFO: revisar httpd, nginx, postfix, dovecot, vsftpd e aplicacoes locais
+SKIP: remediacao automatica global nao aplicavel em RHEL6
+OK
+
+### 109-129.sh
+[109-129] Remediacao: SSH hardening (RHEL6/OL6)
+
+[109] Permissoes SSH seguras
+OK: permissoes ajustadas
+
+[110] Controle de acesso via Allow/Deny
+INFO: controle AllowUsers/AllowGroups/DenyUsers/DenyGroups depende da politica do ambiente
+
+[111-123] Parametros SSH gerais
+OK: SyslogFacility AUTHPRIV
+OK: LogLevel INFO
+OK: X11Forwarding no
+OK: MaxAuthTries 4
+OK: IgnoreRhosts yes
+OK: HostbasedAuthentication no
+OK: PermitRootLogin no
+OK: PermitEmptyPasswords no
+OK: PermitUserEnvironment no
+OK: UsePAM yes
+OK: ClientAliveInterval 300
+OK: ClientAliveCountMax 3
+OK: LoginGraceTime 60
+OK: MaxStartups 10:30:100
+OK: MaxSessions 10
+OK: AllowTcpForwarding no
+
+[124] Banner legal
+OK: Banner /etc/issue.net
+
+[125] Ciphers fortes compativeis RHEL6
+OK: Ciphers aes256-ctr,aes192-ctr,aes128-ctr
+
+[126] MACs fortes compativeis RHEL6
+OK: MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1
+
+[127] KexAlgorithms compativeis RHEL6
+OK: KexAlgorithms diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1
+
+[128] Melhor criptografia SSH suportada
+OK: algoritmos priorizados conforme OpenSSH 5.3 do RHEL6
+
+[129] ForceCommand/Chroot
+INFO: ForceCommand/ChrootDirectory depende de contas e escopo aprovados; remediacao manual
+
+Validando sshd_config
+OK: sshd_config valido
+OK
+
+### 130-147.sh
+[130-147] Remediacao: senhas e contas PAM (RHEL6/OL6)
+
+[130-138] pam_cracklib
+OK: pam_cracklib configurado em /etc/pam.d/system-auth
+OK: pam_cracklib configurado em /etc/pam.d/password-auth
+
+[132-133/141-142] pam_tally2
+OK: pam_tally2 configurado em /etc/pam.d/system-auth
+OK: pam_tally2 configurado em /etc/pam.d/password-auth
+
+[134/140] Historico via pam_unix remember
+OK: remember=5 configurado em /etc/pam.d/system-auth
+OK: remember=5 configurado em /etc/pam.d/password-auth
+
+[139] Hash forte sha512
+OK: SHA512 configurado
+
+[143-145] Politica login.defs
+OK: login.defs ajustado
+
+[146] INACTIVE maior igual a 30
+OK: INACTIVE aplicado para contas locais com senha
+
+[147] Data de ultima troca valida
+OK: datas inconsistentes ajustadas quando aplicavel
+OK
+
+### 148-160.sh
+=== Iniciando remediacao HITSS 148-160 (RHEL6/OL6) ===
+
+[148] root unico UID 0
+OK: somente root possui UID 0
+
+[149] root unico grupo GID 0
+OK: somente grupo root possui GID 0
+
+[150] travar contas de sistema com shell interativo (UID < 500)
+OK: nenhuma conta de sistema interativa encontrada
+
+[151] garantir /sbin/nologin em /etc/shells
+OK: /sbin/nologin presente em /etc/shells
+
+[152] ajustando PATH do root
+OK: PATH do root ajustado
+
+[153] configurando umask
+OK: umask 027 configurado
+
+[154] configurando TMOUT
+OK: TMOUT 900 configurado
+
+[155-159] aplicando ajustes de sudo em arquivo dedicado
+OK: nenhuma regra ampla de grupo sudo encontrada
+OK: nenhuma regra !authenticate encontrada
+OK: sudoers.d/hardening-hitss criado com sucesso
+
+[160] restringindo su ao grupo wheel
+OK: pam_wheel ativado
+=== Remediacao 148-160 concluida ===
+
+### 161-184.sh
+=== Iniciando remediacao HITSS 161-184 (RHEL6/OL6) ===
+
+[161] stack de logs racionalizado
+INFO: RHEL6 nao usa systemd-journald; stack alvo e rsyslog + auditd.
+OK
+
+[162] journald persistente
+SKIP: nao se aplica ao RHEL6/OL6.
+
+[163] rsyslog instalado e ativo
+OK: rsyslog habilitado
+
+[164] logrotate para rsyslog
+OK: logrotate de syslog/rsyslog presente
+
+[165] auditd instalado e rodando
+OK: auditd habilitado
+
+[166] auditoria antes do auditd
+OK: audit=1 adicionado ao GRUB; requer reboot para valer no kernel.
+
+[167-168] retencao de audit log
+OK: auditd.conf ajustado
+
+[169-180] regras auditd
+
+[176] auditoria de comandos privilegiados
+
+[181] auditoria imutavel
+OK: -e 2 adicionado; mudancas futuras em audit podem exigir reboot.
+
+[182] AIDE instalado e inicializado
+OK: AIDE preparado quando disponivel
+
+[183] verificacao de integridade agendada
+OK: cron diario do AIDE configurado
+
+[184] protecao dos binarios de auditoria
+OK: ownership/permissoes dos binarios de auditoria ajustados
+=== Remediacao 161-184 concluida ===
+
+### 185-194.sh
+[185-194] Remediacao - permissoes de arquivos sensiveis
+
+[185] Remediando /etc/passwd
+OK: /etc/passwd ajustado
+
+[186] Remediando /etc/passwd-
+OK: /etc/passwd- ajustado
+
+[187] Remediando /etc/shadow
+OK: /etc/shadow ajustado
+
+[188] Remediando /etc/shadow-
+OK: /etc/shadow- ajustado
+
+[189] Remediando /etc/gshadow-
+OK: /etc/gshadow- ajustado
+
+[190] Remediando /etc/gshadow
+OK: /etc/gshadow ajustado
+
+[191] Remediando /etc/group
+OK: /etc/group ajustado
+
+[192] Remediando /etc/group-
+OK: /etc/group- ajustado
+
+[193] Garantir /sbin/nologin em /etc/shells
+OK: nologin ja presente
+
+[194] Remediando /etc/security/opasswd
+
+[194] Remediando /etc/security/opasswd
+OK: /etc/security/opasswd ajustado
+
+OK: Remediacao 185-194 finalizada
+OK
+
+### 195-203.sh
+[195-203] Remediacao - seguranca de homes e arquivos especiais
+
+[195] Corrigir arquivos órfãos (nouser/nogroup)
+OK: nenhum arquivo orfao encontrado
+
+[196] Remover world-writable fora das áreas permitidas
+OK: permissoes ajustadas
+
+[198] Listar SUID/SGID fora da whitelist
+WARN: revisar SUID/SGID manualmente: /sbin/netreport
+WARN: revisar SUID/SGID manualmente: /sbin/pam_timestamp_check
+WARN: revisar SUID/SGID manualmente: /usr/sbin/userhelper
+WARN: revisar SUID/SGID manualmente: /usr/sbin/postqueue
+WARN: revisar SUID/SGID manualmente: /usr/sbin/usernetctl
+WARN: revisar SUID/SGID manualmente: /usr/sbin/postdrop
+WARN: revisar SUID/SGID manualmente: /usr/libexec/utempter/utempter
+WARN: revisar SUID/SGID manualmente: /usr/libexec/pt_chown
+WARN: revisar SUID/SGID manualmente: /usr/bin/write
+WARN: revisar SUID/SGID manualmente: /usr/bin/wall
+WARN: revisar SUID/SGID manualmente: /usr/bin/locate
+INFO: bits SUID/SGID nao removidos automaticamente
+
+[199-201] Ajustar homes dos usuarios
+OK: home ajustada para vagrant: /home/vagrant
+OK: home ajustada para tenable: /home/tenable
+
+[202] Corrigir dotfiles inseguros
+OK: dotfiles corrigidos
+
+[203] Remover .forward/.netrc/.rhosts
+OK: arquivos sensiveis removidos quando encontrados
+OK

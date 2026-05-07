@@ -1,92 +1,145 @@
-# RHEL Based 8/9 Hardening Full
-Automação de auditoria e remediação para RHEL 8/9 e Oracle Linux 8/9, organizada em shell script e executada por um orquestrador central.
+# HARDENING SHELLSCRIPT RHEL6 LEGADO
 
-## Visão geral
-Este projeto foi criado para executar controles de hardening de forma sequencial, com auditoria, remediação e nova auditoria pós-ajuste.
-A automação está concentrada no diretório `rhel_based_8_9_hardening_full`, enquanto a referência funcional do que é automático, manual ou sujeito a validação operacional está na baseline do projeto.
+Automacao de auditoria e remediacao best effort para hardening de ambientes RHEL 6 e Oracle Linux 6 legados.
 
-## Baseline de referência
-Antes de usar ou adaptar qualquer script, consulte obrigatoriamente:
-baseline/BASELINE_HITSS_DEFAULT_RHEL8_e_9.xlsx
-Esse arquivo define o baseline esperado e deve ser tratado como fonte principal para entendimento do escopo dos controles.
+## Visao Geral
 
-## Estrutura principal
-- `baseline/BASELINE_HITSS_DEFAULT_RHEL8_e_9.xlsx`: baseline de referência
-- `rhel_based_8_9_hardening_full/AUDIT_SH/`: scripts de auditoria
-- `rhel_based_8_9_hardening_full/REMED_SH/`: scripts de remediação
-- `rhel_based_8_9_hardening_full/executor.sh`: orquestrador principal
-- `rhel_based_8_9_hardening_full/logs/audit/`: logs de auditoria
-- `rhel_based_8_9_hardening_full/logs/remed/`: logs de remediação
-- `rhel_based_8_9_hardening_full/execucao_completa.txt`: exemplo de execução completa
-- `rhel_based_8_9_hardening_full/rhel9_e_ol8_post_reboot_audit.jpg`: evidência visual de execução pós-reboot
+Este projeto organiza controles de hardening em shell script, com um audit consolidado e remediacoes separadas por faixa de controles. O objetivo e apoiar validacao e ajuste de servidores legados, respeitando as limitacoes do RHEL6: SysV init, `service`, `chkconfig`, `yum`, GRUB Legacy, `iptables` e configuracoes classicas em arquivos como `/etc/sysctl.conf`.
 
-## Auditoria
-A auditoria está concentrada em:
-AUDIT_SH/1_203.sh
-Esse script executa os controles previstos e retorna os resultados em formato simples, usando `PASS` e `FAIL`.
+Nem todo controle e totalmente automatizavel com seguranca. Alguns itens dependem do papel do servidor, excecoes aprovadas, janelas de mudanca, repositorios disponiveis ou analise manual. Nesses casos, a remediacao deve ser tratada como orientacao operacional ou best effort.
 
-## Remediação
-As remediações estão divididas em blocos por faixa de controles dentro de `REMED_SH`.
-Essa separação facilita manutenção, troubleshooting e execução ordenada por grupos de controles.
+## Baseline
 
-## Executor
-O `executor.sh` é o ponto central da automação.
-Ele é responsável por:
-- localizar os scripts de auditoria e remediação
-- executar os arquivos em ordem natural com `sort -V`
-- criar os diretórios de log, se necessário
-- registrar a saída em arquivos de log
-- contar resultados `PASS` e `FAIL` na auditoria
-- calcular percentual de aderência
-- comparar auditoria pré e pós-remediação
-- listar itens que permaneceram falhando no último `audit-post`
+A referencia funcional do projeto esta em:
 
-## Modos de execução
+```text
+BASELINE_RHEL6.csv
+```
+
+Ela define o escopo dos controles, a criticidade, o tipo de aplicabilidade e a expectativa de auditoria/remediacao.
+
+## Estrutura
+
+```text
+AUDIT_SH/
+  1_203_rhel6.sh      Audit consolidado dos controles
+  LISTA               Arquivo auxiliar
+  REGEX               Arquivo auxiliar
+
+REMED_SH/
+  *.sh                Remediacoes por faixa de controles
+
+executor.sh           Orquestrador de audit/remed/full/report
+BASELINE_RHEL6.csv    Baseline de referencia
+```
+
+Os logs gerados pelo executor ficam em `logs/`, mas essa pasta e ignorada pelo git.
+
+## Modos de Execucao
+
 Menu interativo:
+
+```bash
 ./executor.sh
-Auditoria:
+```
+
+Executar somente auditoria:
+
+```bash
 ./executor.sh audit
-Remediação:
+```
+
+Executar somente remediacao:
+
+```bash
 ./executor.sh remed
-Execução completa:
+```
+
+Executar auditoria, remediacao e auditoria pos-ajuste:
+
+```bash
 ./executor.sh full
-Relatório de pendências do último pós-auditoria:
+```
+
+Listar itens que continuaram falhando no ultimo audit pos-remediacao:
+
+```bash
 ./executor.sh report
+```
 
-## Fluxo da execução completa
-O modo `full` executa a seguinte sequência:
-AUDIT PRÉ -> REMEDIAÇÃO -> AUDIT PÓS
-Ao final, o executor exibe o comparativo entre antes e depois, indicando melhoria, ausência de alteração ou regressão.
+## Fluxo
 
-## Logs
-Os logs são gravados automaticamente em:
-logs/audit/
-logs/remed/
-Exemplos:
-logs/audit/audit-rhel-9-20260305-20260306-122044.log
-logs/audit/audit-oracle-8-20260305-20260306-122119.log
-logs/remed/remed-rhel-9-20260305-20260306-121902.log
+O modo `full` executa:
 
-## Requisitos de execução
-A execução deve ser feita com privilégios administrativos.
+```text
+AUDIT PRE -> REMEDIACAO -> AUDIT POS
+```
+
+Ao final, o executor exibe o total de `PASS`, `FAIL`, percentual de aderencia e comparativo entre antes e depois.
+
+## Requisitos
+
+- Executar em RHEL 6 ou Oracle Linux 6 para validacao real.
+- Usar usuario com privilegios administrativos.
+- Revisar o baseline antes de aplicar remediacoes em servidores produtivos.
+- Executar preferencialmente em VM, snapshot ou janela controlada antes de aplicar em ambiente real.
+
 Exemplo:
+
+```bash
 sudo su -
-cd rhel_based_8_9_hardening_full
+cd HARDENING_SHELLSCRIPT_RHEL6_LEGADO
 chmod -R +x .
-./executor.sh
+./executor.sh audit
+```
 
-## Escopo
-Projeto voltado para automação de hardening em ambientes baseados em:
-- RHEL 8
-- RHEL 9
-- Oracle Linux 8
-- Oracle Linux 9
-A aplicabilidade final depende dos pacotes instalados, dos serviços habilitados, do perfil do host e das exceções aprovadas no ambiente.
+## Remediacao Best Effort
 
-## Observações
-A automação não deve ser interpretada isoladamente da baseline.
-Controles classificados como manuais, contextuais ou dependentes de operação devem ser avaliados conforme a referência funcional definida no arquivo `BASELINE_HITSS_DEFAULT_RHEL8_e_9.xlsx`.
+As remediacoes usam comandos e caminhos compativeis com RHEL6 sempre que possivel. Exemplos:
 
-## Exemplo de uso
-cd rhel_based_8_9_hardening_full
-./executor.sh full
+- `chkconfig` e `service` para servicos SysV
+- `yum` para pacotes
+- `/boot/grub/grub.conf` para GRUB Legacy
+- `/etc/sysconfig/init` para single user mode
+- `/etc/sysctl.conf` para sysctl persistente
+- `iptables` para regras de rede
+
+Alguns controles sao inerentemente contextuais ou manuais, por exemplo:
+
+- processos SELinux `unconfined_t` ou `unconfined_service_t`
+- PolicyKit legado
+- aplicacao de patches de seguranca
+- servicos que podem ser requeridos pelo papel do servidor
+- senha do GRUB, que deve usar hash gerado previamente
+
+Nesses casos, o script pode registrar `INFO`, `SKIP` ou `WARN`, e a decisao final deve seguir o baseline e a politica do ambiente.
+
+## Senha do GRUB Legacy
+
+O controle de senha do GRUB aceita remediacao automatica somente quando um hash MD5 ja foi gerado com `grub-md5-crypt`.
+
+Exemplo:
+
+```bash
+export GRUB_MD5_PASSWORD='$1$hash-gerado'
+./REMED_SH/49-51.sh
+```
+
+Sem essa variavel, o script nao grava senha em claro e trata o item como orientacao/manual.
+
+## Logs e Evidencias
+
+Arquivos de log, evidencias de desenvolvimento e saidas locais nao devem ser versionados. O `.gitignore` ignora, entre outros:
+
+```text
+logs/
+*.log
+*.jpg
+*.png
+execucao_completa.txt
+*.bkp_*
+*.bak.*
+*.tmp
+```
+
+Se algum log ou evidencia precisar ser preservado, guarde fora do versionamento ou documente explicitamente a excecao.

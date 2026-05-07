@@ -59,9 +59,7 @@ if [ -f "$SELINUX_CONFIG" ]; then
         echo "OK: SELINUX=enforcing configurado" || \
         echo "WARN: falha ao ajustar $SELINUX_CONFIG"
 
-    if command -v getenforce >/dev/null 2>&1 && getenforce 2>/dev/null | grep -q '^Permissive$'; then
-        setenforce 1 >/dev/null 2>&1 || echo "WARN: setenforce falhou; pode exigir reboot"
-    fi
+    echo "INFO: nao aplicado setenforce 1 em runtime; em RHEL6/OL6 legado, validar labels e usar reboot/relabel quando necessario"
 else
     echo "SKIP: $SELINUX_CONFIG nao encontrado"
 fi
