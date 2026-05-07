@@ -7,7 +7,11 @@ svc_exists() {
 }
 
 svc_enabled() {
-    chkconfig --list "$1" 2>/dev/null | grep -Eq ':[2-5]:on'
+    chkconfig --list "$1" 2>/dev/null | grep -Eq '(^|[[:space:]])[2-5]:on'
+}
+
+svc_running() {
+    service "$1" status >/dev/null 2>&1
 }
 
 apply_sticky() {
@@ -43,7 +47,14 @@ apply_sticky "/dev/shm"
 
 echo "[48] Desabilitar autofs"
 if svc_exists autofs; then
-    service autofs stop >/dev/null 2>&1 || true
+    if svc_running autofs; then
+        service autofs stop >/dev/null 2>&1 && \
+            echo "OK: autofs parado" || \
+            echo "WARN: falha ao parar autofs"
+    else
+        echo "OK: autofs ja estava parado"
+    fi
+
     if svc_enabled autofs; then
         chkconfig autofs off >/dev/null 2>&1 && \
             echo "OK: autofs desabilitado no boot" || \

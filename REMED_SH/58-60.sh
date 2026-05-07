@@ -1,62 +1,71 @@
 #!/usr/bin/env bash
-echo "[58 - 60] Remediação: Sincronização de tempo"
+
+echo "[58-60] Remediacao: sincronizacao de tempo ntpd (RHEL6/OL6)"
+
+NTP_CONF="/etc/ntp.conf"
+NTP_SERVER="${NTP_SERVER:-pool.ntp.org}"
 
 backup() {
     [ -f "$1" ] && cp "$1" "$1.bkp_$(date +%Y%m%d_%H%M%S)"
 }
 
-echo -e "\n[58] Garantir serviço de sincronização de tempo ativo"
+pkg_installed() {
+    rpm -q "$1" >/dev/null 2>&1
+}
 
-# Remover timesyncd se chronyd estiver instalado (prioridade CIS/RHEL)
-if systemctl list-unit-files | grep -q systemd-timesyncd.service; then
-    systemctl stop systemd-timesyncd 2>/dev/null
-    systemctl disable systemd-timesyncd 2>/dev/null
+svc_exists() {
+    chkconfig --list "$1" >/dev/null 2>&1
+}
+
+disable_service() {
+    svc="$1"
+    if svc_exists "$svc"; then
+        service "$svc" stop >/dev/null 2>&1 || true
+        chkconfig "$svc" off >/dev/null 2>&1 || true
+        echo "OK: $svc desabilitado"
+    fi
+}
+
+echo -e "\n[58] ntpd ativo"
+if ! pkg_installed ntp; then
+    yum install -y ntp >/dev/null 2>&1 && \
+        echo "OK: pacote ntp instalado" || \
+        echo "WARN: falha ao instalar ntp"
 fi
 
-# Instalar chrony caso não exista
-if ! rpm -q chrony &>/dev/null; then
-    dnf install -y chrony >/dev/null 2>&1
-fi
+disable_service chronyd
 
-# Garantir chronyd ativo
-systemctl enable chronyd --now >/dev/null 2>&1
-
-if systemctl is-active chronyd &>/dev/null; then
-    echo "✔ Serviço de tempo ativo (chronyd)"
+if svc_exists ntpd; then
+    service ntpd start >/dev/null 2>&1 && \
+        echo "OK: ntpd iniciado" || \
+        echo "WARN: falha ao iniciar ntpd"
 else
-    echo "⚠️ Nenhum serviço de tempo ativo"
+    echo "WARN: servico ntpd nao encontrado"
 fi
 
-echo -e "\n[59] Configurar Chrony corretamente"
-
-CONF="/etc/chrony.conf"
-backup "$CONF"
-
-# Instalar se necessário
-rpm -q chrony &>/dev/null || dnf install -y chrony >/dev/null 2>&1
-
-# Habilitar e iniciar
-systemctl enable chronyd --now >/dev/null 2>&1
-
-# Adicionar servidor se faltar
-if ! grep -q '^server' "$CONF"; then
-    echo "server time.google.com iburst" >> "$CONF"
-    echo "✔ Configurado servidor NTP padrão (time.google.com)"
-fi
-
-echo "✔ Chrony configurado"
-
-echo -e "\n[60] Remover NTP clássico (ntpd)"
-
-if rpm -q ntp &>/dev/null; then
-    systemctl stop ntpd >/dev/null 2>&1
-    systemctl disable ntpd >/dev/null 2>&1
-    dnf remove -y ntp >/dev/null 2>&1
-    echo "✔ NTP removido"
+echo -e "\n[59] Fontes NTP confiaveis"
+if [ -f "$NTP_CONF" ]; then
+    backup "$NTP_CONF"
+    if grep -Eq '^[[:space:]]*(server|pool)[[:space:]]+' "$NTP_CONF"; then
+        echo "OK: $NTP_CONF ja possui fonte de tempo"
+    else
+        printf 'server %s iburst\n' "$NTP_SERVER" >> "$NTP_CONF"
+        echo "OK: fonte NTP adicionada em $NTP_CONF"
+    fi
 else
-    echo "✔ NTP não está instalado"
+    printf 'server %s iburst\n' "$NTP_SERVER" > "$NTP_CONF" 2>/dev/null && \
+        echo "OK: $NTP_CONF criado" || \
+        echo "WARN: falha ao criar $NTP_CONF"
 fi
 
+echo -e "\n[60] ntpd no boot"
+if svc_exists ntpd; then
+    chkconfig ntpd on >/dev/null 2>&1 && \
+        echo "OK: ntpd habilitado no boot" || \
+        echo "WARN: falha ao habilitar ntpd no boot"
+else
+    echo "WARN: servico ntpd nao encontrado"
+fi
 
 echo "OK"
 exit 0
