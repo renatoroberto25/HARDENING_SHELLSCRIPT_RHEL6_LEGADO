@@ -1,0 +1,24 @@
+# Runtime logs and execution outputs
+logs/*
+execucao_completa.txt
+EXECUCAO_COMPLETA.txt
+EXECUÇÃO_COMPLETA.txt
+
+# Development evidence / screenshots
+*.jpg
+*.jpeg
+*.png
+
+# Backups created by remediation scripts
+*.bkp_*
+*.bak.*
+*.tmp
+
+# Local editor / OS noise
+.DS_Store
+Thumbs.db
+*~
+.swp
+.swo
+.vscode/
+.idea/

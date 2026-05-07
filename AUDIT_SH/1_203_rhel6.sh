@@ -143,16 +143,16 @@ echo -e "\n[47] Sticky bit em /dev/shm"
 (stat -c "%A" /dev/shm | grep -q 't' && echo "PASS" || echo "FAIL")
 
 echo -e "\n[48] Autofs desabilitado"
-(systemctl is-enabled autofs &>/dev/null && echo "FAIL" || echo "PASS")
+(chkconfig --list autofs 2>/dev/null | grep -Eq '(^|[[:space:]])[2-5]:on' && echo "FAIL" || echo "PASS")
 
 echo -e "\n[49] Senha de bootloader configurada"
-(grep -q 'password_pbkdf2' /boot/grub2/grub.cfg 2>/dev/null && echo "PASS" || echo "FAIL")
+(grep -Eq '^[[:space:]]*password[[:space:]]+--md5[[:space:]]+' /boot/grub/grub.conf 2>/dev/null && echo "PASS" || echo "FAIL")
 
 echo -e "\n[50] Permissões seguras no arquivo do bootloader"
-(stat -Lc '%a %U %G' /boot/grub2/grub.cfg 2>/dev/null | grep -Eq '^(400|600) root root$' && echo "PASS" || echo "FAIL")
+(stat -Lc '%a %U %G' /boot/grub/grub.conf 2>/dev/null | grep -Eq '^(400|600) root root$' && echo "PASS" || echo "FAIL")
 
 echo -e "\n[51] Single user mode com autenticação"
-(grep -q '^ExecStart=-/bin/sh' /usr/lib/systemd/system/emergency.service && echo "FAIL" || echo "PASS")
+(grep -Eq '^[[:space:]]*SINGLE=/sbin/sulogin[[:space:]]*$' /etc/sysconfig/init 2>/dev/null && echo "PASS" || echo "FAIL")
 
 echo -e "\n[52] MAC (SELinux/AppArmor) ativo"
 (getenforce 2>/dev/null | grep -Eq 'Enforcing|Permissive' && echo "PASS" || echo "FAIL")
@@ -173,16 +173,16 @@ echo -e "\n[57] xinetd removido"
 (rpm -q xinetd &>/dev/null && echo "FAIL" || echo "PASS")
 
 echo -e "\n[58] Sincronização de tempo em uso"
-( systemctl is-active --quiet chronyd &>/dev/null || systemctl is-active --quiet ntpd &>/dev/null || systemctl is-active --quiet systemd-timesyncd &>/dev/null ) && echo "PASS" || echo "FAIL"
+(service ntpd status >/dev/null 2>&1 && echo "PASS" || echo "FAIL")
 
-echo -e "\n[59] Chrony configurado"
-( ! rpm -q chrony &>/dev/null || ( systemctl is-enabled chronyd &>/dev/null && grep -q '^server' /etc/chrony.conf 2>/dev/null ) ) && echo "PASS" || echo "FAIL"
+echo -e "\n[59] Fontes NTP configuradas"
+(grep -Eq '^[[:space:]]*(server|pool)[[:space:]]+' /etc/ntp.conf 2>/dev/null && echo "PASS" || echo "FAIL")
 
-echo -e "\n[60] NTP configurado"
-( ! rpm -q ntp &>/dev/null || ( systemctl is-enabled ntpd &>/dev/null && grep -q '^server' /etc/ntp.conf 2>/dev/null ) ) && echo "PASS" || echo "FAIL"
+echo -e "\n[60] ntpd habilitado no boot"
+(chkconfig --list ntpd 2>/dev/null | grep -Eq '(^|[[:space:]])[2-5]:on' && echo "PASS" || echo "FAIL")
 
 echo -e "\n[61] X11 ausente"
-(rpm -q xorg-x11-server-common &>/dev/null && echo "FAIL" || echo "PASS")
+( ( rpm -q xorg-x11-server-common &>/dev/null || rpm -q xorg-x11-server-Xorg &>/dev/null ) && echo "FAIL" || echo "PASS")
 
 echo -e "\n[62] Avahi ausente"
 (rpm -q avahi &>/dev/null && echo "FAIL" || echo "PASS")
@@ -191,7 +191,7 @@ echo -e "\n[63] CUPS ausente"
 (rpm -q cups &>/dev/null && echo "FAIL" || echo "PASS")
 
 echo -e "\n[64] DHCP server ausente"
-(rpm -q dhcp-server &>/dev/null && echo "FAIL" || echo "PASS")
+( ( rpm -q dhcp &>/dev/null || rpm -q dhcp-server &>/dev/null ) && echo "FAIL" || echo "PASS")
 
 echo -e "\n[65] LDAP server ausente"
 (rpm -q openldap-servers &>/dev/null && echo "FAIL" || echo "PASS")
@@ -227,13 +227,13 @@ echo -e "\n[75] MTA em modo local-only"
 ( [ ! -f /etc/postfix/main.cf ] || grep -Eq '^[[:space:]]*inet_interfaces[[:space:]]*=[[:space:]]*(localhost|loopback-only)\b' /etc/postfix/main.cf 2>/dev/null ) && echo "PASS" || echo "FAIL"
 
 echo -e "\n[76] NFS server controlado"
-(systemctl is-enabled nfs-server &>/dev/null && echo "FAIL" || echo "PASS")
+(chkconfig --list nfs 2>/dev/null | grep -Eq '(^|[[:space:]])[2-5]:on' && echo "FAIL" || echo "PASS")
 
 echo -e "\n[77] rpcbind controlado"
-(systemctl is-enabled rpcbind &>/dev/null && echo "FAIL" || echo "PASS")
+(chkconfig --list rpcbind 2>/dev/null | grep -Eq '(^|[[:space:]])[2-5]:on' && echo "FAIL" || echo "PASS")
 
 echo -e "\n[78] rsync daemon controlado"
-(systemctl is-enabled rsyncd &>/dev/null && echo "FAIL" || echo "PASS")
+(chkconfig --list rsync 2>/dev/null | grep -Eq '(^|[[:space:]])[2-5]:on|on$' && echo "FAIL" || echo "PASS")
 
 echo -e "\n[79] Cliente NIS ausente"
 (rpm -q ypbind &>/dev/null && echo "FAIL" || echo "PASS")
@@ -251,25 +251,25 @@ echo -e "\n[83] Cliente LDAP ausente"
 (rpm -q openldap-clients &>/dev/null && echo "FAIL" || echo "PASS")
 
 echo -e "\n[84] Serviços não essenciais removidos/mascarados"
-(systemctl list-unit-files --state=enabled 2>/dev/null | grep -Eq '^(avahi-daemon|cups|telnet|vsftpd|xinetd|tftp|ypserv|ypbind)\.service' && echo "FAIL" || echo "PASS")
+(chkconfig --list 2>/dev/null | grep -E '^(avahi-daemon|cups|telnet|vsftpd|xinetd|tftp|ypserv|ypbind)[[:space:]]' | grep -Eq '(^|[[:space:]])[2-5]:on|on$' && echo "FAIL" || echo "PASS")
 
 echo -e "\n[85] TFTP server removido"
 (rpm -q tftp-server &>/dev/null && echo "FAIL" || echo "PASS")
 
 echo -e "\n[86] PolicyKit endurecido"
-( grep -Ehv '^[[:space:]]*(//|#)' /etc/polkit-1/rules.d/*.rules 2>/dev/null | grep -Eq 'polkit\.Result\.YES|[^[:alnum:]_]allow[^[:alnum:]_]' ) && echo "FAIL" || echo "PASS"
+(find /etc/polkit-1/localauthority /etc/polkit-1/rules.d -type f \( -name '*.pkla' -o -name '*.rules' \) -exec grep -Ehv '^[[:space:]]*(#|//)' {} + 2>/dev/null | grep -Eqi 'ResultActive[[:space:]]*=[[:space:]]*yes|polkit\.Result\.YES|[^[:alnum:]_]allow[^[:alnum:]_]' ) && echo "FAIL" || echo "PASS"
 
 echo -e "\n[87] Assinaturas de pacotes habilitadas"
-(grep -Eq '^gpgcheck\s*=\s*1' /etc/yum.conf /etc/yum.repos.d/*.repo 2>/dev/null && echo "PASS" || echo "FAIL")
+(grep -Eq '^gpgcheck[[:space:]]*=[[:space:]]*1' /etc/yum.conf /etc/yum.repos.d/*.repo 2>/dev/null && echo "PASS" || echo "FAIL")
 
 echo -e "\n[88] Patches de segurança aplicados - USO APENAS EM TEMPLATES"
-(dnf check-update --security &>/dev/null && echo "FAIL" || echo "PASS")
+(yum check-update --security >/dev/null 2>&1; rc=$?; [ "$rc" -eq 100 ] && echo "FAIL" || echo "PASS")
 
-echo -e "\n[89] Apenas um daemon de time sync"
-( ( systemctl is-active --quiet chronyd &>/dev/null && ! systemctl is-active --quiet ntpd &>/dev/null && ! systemctl is-active --quiet systemd-timesyncd &>/dev/null ) || ( ! systemctl is-active --quiet chronyd &>/dev/null && systemctl is-active --quiet ntpd &>/dev/null && ! systemctl is-active --quiet systemd-timesyncd &>/dev/null ) || ( ! systemctl is-active --quiet chronyd &>/dev/null && ! systemctl is-active --quiet ntpd &>/dev/null && systemctl is-active --quiet systemd-timesyncd &>/dev/null ) ) && echo "PASS" || echo "FAIL"
+echo -e "\n[89] Apenas ntpd como daemon de time sync"
+(service ntpd status >/dev/null 2>&1 && ! service chronyd status >/dev/null 2>&1 && echo "PASS" || echo "FAIL")
 
 echo -e "\n[90] Cron/at seguros e restritos"
-(stat -Lc '%a %U %G' /etc/cron.allow 2>/dev/null | grep -Eq '^640 root (root|crontab)$' && echo "PASS" || echo "FAIL")
+(stat -Lc '%a %U %G' /etc/cron.allow /etc/at.allow 2>/dev/null | awk '{if($1!="640" || $2!="root" || ($3!="root" && $3!="crontab")) exit 1}' && [ ! -f /etc/cron.deny ] && [ ! -f /etc/at.deny ] && echo "PASS" || echo "FAIL")
 
 echo -e "\n[91] IP forwarding desabilitado"
 (sysctl -n net.ipv4.ip_forward 2>/dev/null | grep -q '^0$' && sysctl -n net.ipv6.conf.all.forwarding 2>/dev/null | grep -q '^0$' && echo "PASS" || echo "FAIL")
@@ -299,10 +299,10 @@ echo -e "\n[99] IPv6 desabilitado ou endurecido"
 (sysctl -n net.ipv6.conf.all.disable_ipv6 2>/dev/null | grep -q '^1$' && echo "PASS" || echo "FAIL")
 
 echo -e "\n[100] ICMP timestamp-request drop"
-(firewall-cmd --direct --query-rule ipv4 filter INPUT 0 -p icmp --icmp-type timestamp-request -j DROP &>/dev/null || nft list ruleset 2>/dev/null | grep -Eqi 'icmp[[:space:]]+type[[:space:]]+timestamp-request[[:space:]]+drop' || iptables -L INPUT -n 2>/dev/null | grep -qi 'icmp type timestamp-request.*DROP') && echo "PASS" || echo "FAIL"
+(iptables -C INPUT -p icmp --icmp-type timestamp-request -j DROP 2>/dev/null || iptables -L INPUT -n 2>/dev/null | grep -qi 'icmp type timestamp-request.*DROP') && echo "PASS" || echo "FAIL"
 
 echo -e "\n[101] ICMP timestamp-reply drop"
-(firewall-cmd --direct --query-rule ipv4 filter INPUT 0 -p icmp --icmp-type timestamp-reply -j DROP &>/dev/null || nft list ruleset 2>/dev/null | grep -Eqi 'icmp[[:space:]]+type[[:space:]]+timestamp-reply[[:space:]]+drop' || iptables -L INPUT -n 2>/dev/null | grep -qi 'icmp type timestamp-reply.*DROP') && echo "PASS" || echo "FAIL"
+(iptables -C INPUT -p icmp --icmp-type timestamp-reply -j DROP 2>/dev/null || iptables -L INPUT -n 2>/dev/null | grep -qi 'icmp type timestamp-reply.*DROP') && echo "PASS" || echo "FAIL"
 
 echo -e "\n[102] Wireless/Bluetooth desabilitados"
 (lsmod | grep -Eq 'bluetooth|iwlwifi' && echo "FAIL" || echo "PASS")

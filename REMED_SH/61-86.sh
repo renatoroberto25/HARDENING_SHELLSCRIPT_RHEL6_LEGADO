@@ -1,152 +1,162 @@
 #!/usr/bin/env bash
-echo "[61 - 86] Remediação: Serviços e clientes desnecessários"
+
+echo "[61-86] Remediacao: servicos e clientes desnecessarios (RHEL6/OL6)"
 
 backup() {
     [ -f "$1" ] && cp "$1" "$1.bkp_$(date +%Y%m%d_%H%M%S)"
 }
 
+pkg_installed() {
+    rpm -q "$1" >/dev/null 2>&1
+}
+
 remove_pkg() {
-    PKG="$1"
-    if rpm -q "$PKG" &>/dev/null; then
-        dnf remove -y "$PKG" >/dev/null 2>&1
-        echo "✔ Pacote removido: $PKG"
+    pkg="$1"
+
+    if pkg_installed "$pkg"; then
+        yum remove -y "$pkg" >/dev/null 2>&1 && \
+            echo "OK: pacote removido: $pkg" || \
+            echo "WARN: falha ao remover pacote: $pkg"
     else
-        echo "✔ $PKG não está instalado"
+        echo "OK: $pkg nao instalado"
     fi
+}
+
+svc_exists() {
+    chkconfig --list "$1" >/dev/null 2>&1
 }
 
 disable_service() {
-    SVC="$1"
-    if systemctl list-unit-files | grep -q "^$SVC"; then
-        systemctl stop "$SVC" >/dev/null 2>&1
-        systemctl disable "$SVC" >/dev/null 2>&1
-        systemctl mask "$SVC" >/dev/null 2>&1
-        echo "✔ Serviço desabilitado e mascarado: $SVC"
+    svc="$1"
+
+    if svc_exists "$svc"; then
+        service "$svc" stop >/dev/null 2>&1 || true
+        chkconfig "$svc" off >/dev/null 2>&1 && \
+            echo "OK: servico desabilitado: $svc" || \
+            echo "WARN: falha ao desabilitar servico: $svc"
     else
-        echo "✔ Serviço não encontrado: $SVC"
+        echo "OK: servico nao encontrado: $svc"
     fi
 }
 
-echo -e "\n[61] Remover X11"
+echo -e "\n[61] X11 removido"
 remove_pkg xorg-x11-server-common
+remove_pkg xorg-x11-server-Xorg
 
-echo -e "\n[62] Remover Avahi"
+echo -e "\n[62] Avahi desabilitado/removido"
+disable_service avahi-daemon
 remove_pkg avahi
 
-echo -e "\n[63] Remover CUPS"
+echo -e "\n[63] CUPS desabilitado/removido"
+disable_service cups
 remove_pkg cups
 
-echo -e "\n[64] Remover DHCP server"
+echo -e "\n[64] DHCP server ausente"
+disable_service dhcpd
+remove_pkg dhcp
 remove_pkg dhcp-server
 
-echo -e "\n[65] Remover LDAP server"
+echo -e "\n[65] LDAP server ausente"
+disable_service slapd
 remove_pkg openldap-servers
 
-echo -e "\n[66] Remover Bind DNS server"
+echo -e "\n[66] DNS server ausente"
+disable_service named
 remove_pkg bind
 
-echo -e "\n[67] Remover FTP (vsftpd)"
+echo -e "\n[67] FTP server ausente"
+disable_service vsftpd
 remove_pkg vsftpd
 
-echo -e "\n[68] Remover Apache HTTP"
+echo -e "\n[68] HTTP server ausente"
+disable_service httpd
 remove_pkg httpd
 
-echo -e "\n[69] Remover Dovecot (IMAP/POP3)"
+echo -e "\n[69] IMAP/POP3 server ausente"
+disable_service dovecot
 remove_pkg dovecot
 
-echo -e "\n[70] Remover Samba"
+echo -e "\n[70] Samba ausente"
+disable_service smb
+disable_service nmb
 remove_pkg samba
 
-echo -e "\n[71] Remover Squid"
+echo -e "\n[71] Proxy HTTP ausente"
+disable_service squid
 remove_pkg squid
 
-echo -e "\n[72] Remover SNMP"
+echo -e "\n[72] SNMP desabilitado/removido"
+disable_service snmpd
 remove_pkg net-snmp
 
-echo -e "\n[73] Remover NIS server"
+echo -e "\n[73] NIS server ausente"
+disable_service ypserv
 remove_pkg ypserv
 
-echo -e "\n[74] Remover Telnet server"
+echo -e "\n[74] Telnet server ausente"
+disable_service telnet
 remove_pkg telnet-server
 
-echo -e "\n[75] Configurar Postfix para loopback-only"
-
-FILE="/etc/postfix/main.cf"
-if [ -f "$FILE" ]; then
-    backup "$FILE"
-    if grep -q '^inet_interfaces' "$FILE"; then
-        sed -i 's/^inet_interfaces.*/inet_interfaces = loopback-only/' "$FILE"
+echo -e "\n[75] MTA em modo local-only"
+POSTFIX_CF="/etc/postfix/main.cf"
+SENDMAIL_CF="/etc/mail/sendmail.mc"
+if [ -f "$POSTFIX_CF" ]; then
+    backup "$POSTFIX_CF"
+    if grep -Eq '^[[:space:]]*inet_interfaces[[:space:]]*=' "$POSTFIX_CF"; then
+        sed -ri 's/^[[:space:]]*inet_interfaces[[:space:]]*=.*/inet_interfaces = loopback-only/' "$POSTFIX_CF"
     else
-        echo "inet_interfaces = loopback-only" >> "$FILE"
+        printf '\ninet_interfaces = loopback-only\n' >> "$POSTFIX_CF"
     fi
-    systemctl restart postfix >/dev/null 2>&1
-    echo "✔ Postfix ajustado para loopback-only"
+    service postfix restart >/dev/null 2>&1 || true
+    echo "OK: postfix ajustado para loopback-only"
+elif [ -f "$SENDMAIL_CF" ]; then
+    echo "INFO: sendmail detectado; validar DAEMON_OPTIONS para loopback manualmente"
 else
-    echo "✔ Postfix não instalado"
+    echo "OK: MTA nao detectado"
 fi
 
-echo -e "\n[76] Desabilitar NFS server"
-disable_service nfs-server
+echo -e "\n[76] NFS server desabilitado"
+disable_service nfs
+disable_service nfslock
 
-echo -e "\n[77] Desabilitar rpcbind"
+echo -e "\n[77] rpcbind desabilitado"
 disable_service rpcbind
 
-echo -e "\n[78] Desabilitar rsyncd"
-disable_service rsyncd
+echo -e "\n[78] rsync daemon desabilitado"
+disable_service rsync
+if [ -f /etc/xinetd.d/rsync ]; then
+    backup /etc/xinetd.d/rsync
+    sed -ri 's/^[[:space:]]*disable[[:space:]]*=.*/disable = yes/' /etc/xinetd.d/rsync
+    echo "OK: rsync via xinetd desabilitado"
+fi
 
-echo -e "\n[79] Remover cliente NIS"
+echo -e "\n[79] Cliente NIS removido"
+disable_service ypbind
 remove_pkg ypbind
 
-echo -e "\n[80] Remover cliente rsh"
+echo -e "\n[80] Cliente rsh removido"
 remove_pkg rsh
 
-echo -e "\n[81] Remover cliente talk"
+echo -e "\n[81] Cliente talk removido"
 remove_pkg talk
 
-echo -e "\n[82] Remover cliente telnet"
+echo -e "\n[82] Cliente telnet removido"
 remove_pkg telnet
 
-echo -e "\n[83] Remover cliente LDAP"
+echo -e "\n[83] Cliente LDAP removido"
 remove_pkg openldap-clients
 
-echo -e "\n[84] Desabilitar serviços não essenciais habilitados"
-
-for svc in avahi-daemon cups tftp xinetd telnet vsftpd nis ; do
+echo -e "\n[84] Servicos superfluos SysV"
+for svc in avahi-daemon cups telnet vsftpd xinetd tftp ypserv ypbind; do
     disable_service "$svc"
 done
 
-echo "✔ Serviços supérfluos desabilitados"
-
-echo -e "\n[85] Remover TFTP server"
+echo -e "\n[85] TFTP server removido"
+disable_service tftp
 remove_pkg tftp-server
 
-echo -e "\n[86] Endurecer PolicyKit"
-POLKIT_DIR="/etc/polkit-1/rules.d"
-if ls "$POLKIT_DIR"/*.rules >/dev/null 2>&1; then
-    ALTEROU=0
-    for f in "$POLKIT_DIR"/*.rules; do
-        if grep -Eq 'polkit\.Result\.YES|allow' "$f" 2>/dev/null; then
-            backup "$f"
-            if ! grep -q '^\s*//' "$f"; then
-                sed -i '/polkit\.Result\.YES/s/^/\/\/ BLOQUEADO HARDENING: /;/allow/s/^/\/\/ BLOQUEADO HARDENING: /' "$f"
-            else
-                sed -i '/polkit\.Result\.YES/ { /^[[:space:]]*\/\//! s/^/\/\/ BLOQUEADO HARDENING: / ; } ; /allow/ { /^[[:space:]]*\/\//! s/^/\/\/ BLOQUEADO HARDENING: / ; }' "$f"
-            fi
-            if ! grep -Eq 'polkit\.Result\.YES|allow' "$f" 2>/dev/null; then
-                echo "✔ Regra permissiva neutralizada: $f"
-                ALTEROU=1
-            else
-                echo "⚠️ Ainda há conteúdo permissivo em: $f"
-            fi
-        fi
-    done
-    if [ "$ALTEROU" -eq 0 ]; then
-        echo "✔ Nenhuma regra permissiva encontrada"
-    fi
-else
-    echo "✔ Nenhum arquivo .rules encontrado em $POLKIT_DIR"
-fi
-
+echo -e "\n[86] PolicyKit RHEL6 seguro"
+echo "INFO: PolicyKit legado usa regras pkla; revisar concessoes ResultActive=yes conforme politica aprovada"
 
 echo "OK"
 exit 0

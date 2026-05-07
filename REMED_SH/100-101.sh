@@ -1,16 +1,28 @@
 #!/usr/bin/env bash
-echo "[100-101] Remediação: ICMP timestamp"
 
-if systemctl is-active firewalld &>/dev/null; then
-    firewall-cmd --direct --add-rule ipv4 filter INPUT 0 -p icmp --icmp-type timestamp-request -j DROP &>/dev/null || true
-    firewall-cmd --direct --add-rule ipv4 filter INPUT 0 -p icmp --icmp-type timestamp-reply -j DROP &>/dev/null || true
-    firewall-cmd --runtime-to-permanent &>/dev/null
-elif command -v nft &>/dev/null; then
-    nft add rule inet filter input icmp type timestamp-request drop 2>/dev/null || true
-    nft add rule inet filter input icmp type timestamp-reply drop 2>/dev/null || true
-elif command -v iptables &>/dev/null; then
-    iptables -C INPUT -p icmp --icmp-type timestamp-request -j DROP 2>/dev/null || iptables -A INPUT -p icmp --icmp-type timestamp-request -j DROP
-    iptables -C INPUT -p icmp --icmp-type timestamp-reply -j DROP 2>/dev/null || iptables -A INPUT -p icmp --icmp-type timestamp-reply -j DROP
+echo "[100-101] Remediacao: ICMP timestamp via iptables (RHEL6/OL6)"
+
+add_rule() {
+    icmp_type="$1"
+
+    if ! command -v iptables >/dev/null 2>&1; then
+        echo "SKIP: iptables nao encontrado"
+        return
+    fi
+
+    iptables -C INPUT -p icmp --icmp-type "$icmp_type" -j DROP 2>/dev/null || \
+        iptables -A INPUT -p icmp --icmp-type "$icmp_type" -j DROP
+    echo "OK: DROP para ICMP $icmp_type"
+}
+
+echo -e "\n[100] ICMP timestamp-request drop"
+add_rule timestamp-request
+
+echo -e "\n[101] ICMP timestamp-reply drop"
+add_rule timestamp-reply
+
+if command -v service >/dev/null 2>&1; then
+    service iptables save >/dev/null 2>&1 || echo "INFO: regra aplicada em runtime; persistencia pode exigir service iptables save"
 fi
 
 echo "OK"
