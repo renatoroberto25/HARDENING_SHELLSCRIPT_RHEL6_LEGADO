@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
-echo "[108] Remediação: Política de Criptografia TLS"
 
-if command -v update-crypto-policies >/dev/null 2>&1; then
-    CURRENT="$(update-crypto-policies --show 2>/dev/null)"
+echo "[108] Remediacao: TLS minimo por servico (RHEL6/OL6)"
 
-    if [ "$CURRENT" != "FUTURE" ]; then
-        update-crypto-policies --set FUTURE
-    fi
-fi
+echo "INFO: RHEL6 nao possui update-crypto-policies global"
+echo "INFO: TLS deve ser configurado por servico quando suportado"
+echo "INFO: revisar httpd, nginx, postfix, dovecot, vsftpd e aplicacoes locais"
+echo "SKIP: remediacao automatica global nao aplicavel em RHEL6"
 
 echo "OK"
 exit 0
