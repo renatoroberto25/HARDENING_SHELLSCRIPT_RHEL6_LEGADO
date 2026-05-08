@@ -167,6 +167,7 @@ print_failed_items() {
 
     awk '
         /^\[[0-9]+]/ { item=$0; next }
+        /^[0-9]+;/ { item=$0; next }
         /^[[:space:]]*FAIL[[:space:]]*$/ && item != "" {
             print item
         }

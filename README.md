@@ -1,41 +1,74 @@
 # HARDENING SHELLSCRIPT RHEL6 LEGADO
 
-Automacao de auditoria e remediacao best effort para hardening de ambientes RHEL 6 e Oracle Linux 6 legados.
+Automacao de auditoria e remediacao best effort para hardening de ambientes RHEL 6, CentOS 6 e Oracle Linux 6.
 
-## Visao Geral
+O projeto foi desenhado para sistemas legados em operacao real, normalmente com anos de configuracao acumulada, dependencias historicas e janelas de mudanca restritas. Por isso, os scripts priorizam comandos compativeis com RHEL6: `service`, `chkconfig`, `yum`, GRUB Legacy, `iptables`, PAM classico, `auditd`, `rsyslog` e arquivos de configuracao em `/etc`.
 
-Este projeto organiza controles de hardening em shell script, com um audit consolidado e remediacoes separadas por faixa de controles. O objetivo e apoiar validacao e ajuste de servidores legados, respeitando as limitacoes do RHEL6: SysV init, `service`, `chkconfig`, `yum`, GRUB Legacy, `iptables` e configuracoes classicas em arquivos como `/etc/sysctl.conf`.
+Nem todo controle deve ser corrigido automaticamente. Quando a acao depende do papel do servidor, risco operacional, dependencia de aplicacao ou validacao de excecao, a remediacao registra `INFO`, `WARN` ou `SKIP` e deixa a decisao para tratamento manual.
 
-Nem todo controle e totalmente automatizavel com seguranca. Alguns itens dependem do papel do servidor, excecoes aprovadas, janelas de mudanca, repositorios disponiveis ou analise manual. Nesses casos, a remediacao deve ser tratada como orientacao operacional ou best effort.
+## Escopo de Entrega
+
+O pacote operacional esperado e composto por:
+
+```text
+executor.sh
+BASELINE_RHEL6.csv
+AUDIT_SH/
+REMED_SH/
+utils/
+logs/
+```
+
+`logs/` e usado como destino de execucao e pode conter arquivos de indice/manifesto, mas os logs gerados em runtime nao devem ser versionados.
+
+Arquivos de laboratorio, evidencias de desenvolvimento, imagens, backups locais e artefatos pessoais nao fazem parte do pacote operacional.
 
 ## Baseline
 
-A referencia funcional do projeto esta em:
+A referencia dos controles fica em:
 
 ```text
 BASELINE_RHEL6.csv
 ```
 
-Ela define o escopo dos controles, a criticidade, o tipo de aplicabilidade e a expectativa de auditoria/remediacao.
+O audit principal imprime cada controle no formato do baseline:
+
+```text
+Topico;Subtopico;Perfil;Criticidade;Resumo;
+```
+
+Exemplo:
+
+```text
+1;Kernel;Light;Alta;Bloqueio cramfs;
+PASS
+```
+
+Esse formato permite correlacionar diretamente log, evidencia, controle e linha do baseline.
 
 ## Estrutura
 
 ```text
 AUDIT_SH/
-  1_203_rhel6.sh      Audit consolidado dos controles
+  1_190_rhel6.sh      Audit consolidado dos controles RHEL6
   LISTA               Arquivo auxiliar
   REGEX               Arquivo auxiliar
 
 REMED_SH/
   *.sh                Remediacoes por faixa de controles
 
-executor.sh           Orquestrador de audit/remed/full/report
+utils/
+  parser.sh           Utilitario auxiliar para tratamento/parse de saidas
+
+logs/
+  index.html          Estrutura de apresentacao/indice
+  manifest.json       Manifesto de saidas
+
+executor.sh           Menu e orquestrador audit/remed/full/report/status
 BASELINE_RHEL6.csv    Baseline de referencia
 ```
 
-Os logs gerados pelo executor ficam em `logs/`, mas essa pasta e ignorada pelo git.
-
-## Modos de Execucao
+## Executor
 
 Menu interativo:
 
@@ -43,31 +76,15 @@ Menu interativo:
 ./executor.sh
 ```
 
-Executar somente auditoria:
+Modos diretos:
 
 ```bash
 ./executor.sh audit
-```
-
-Executar somente remediacao:
-
-```bash
 ./executor.sh remed
-```
-
-Executar auditoria, remediacao e auditoria pos-ajuste:
-
-```bash
 ./executor.sh full
-```
-
-Listar itens que continuaram falhando no ultimo audit pos-remediacao:
-
-```bash
 ./executor.sh report
+./executor.sh status
 ```
-
-## Fluxo
 
 O modo `full` executa:
 
@@ -75,14 +92,17 @@ O modo `full` executa:
 AUDIT PRE -> REMEDIACAO -> AUDIT POS
 ```
 
-Ao final, o executor exibe o total de `PASS`, `FAIL`, percentual de aderencia e comparativo entre antes e depois.
+Ao final, o executor mostra totais de `PASS`, `FAIL`, aderencia, comparativo entre antes/depois e lista dos itens ainda em `FAIL`.
 
-## Requisitos
+## Uso Operacional
 
-- Executar em RHEL 6 ou Oracle Linux 6 para validacao real.
-- Usar usuario com privilegios administrativos.
-- Revisar o baseline antes de aplicar remediacoes em servidores produtivos.
-- Executar preferencialmente em VM, snapshot ou janela controlada antes de aplicar em ambiente real.
+Antes de executar remediacao em servidor real:
+
+- Validar o escopo com o responsavel tecnico do servidor.
+- Confirmar backup, console out-of-band ou outro plano de recuperacao.
+- Executar primeiro `audit` e revisar os controles em `FAIL`.
+- Aplicar remediacoes por janela controlada ou por blocos, quando necessario.
+- Reexecutar `audit` apos a mudanca e preservar evidencias conforme processo interno.
 
 Exemplo:
 
@@ -93,53 +113,30 @@ chmod -R +x .
 ./executor.sh audit
 ```
 
-## Remediacao Best Effort
-
-As remediacoes usam comandos e caminhos compativeis com RHEL6 sempre que possivel. Exemplos:
-
-- `chkconfig` e `service` para servicos SysV
-- `yum` para pacotes
-- `/boot/grub/grub.conf` para GRUB Legacy
-- `/etc/sysconfig/init` para single user mode
-- `/etc/sysctl.conf` para sysctl persistente
-- `iptables` para regras de rede
-
-Alguns controles sao inerentemente contextuais ou manuais, por exemplo:
-
-- processos SELinux `unconfined_t` ou `unconfined_service_t`
-- PolicyKit legado
-- aplicacao de patches de seguranca
-- servicos que podem ser requeridos pelo papel do servidor
-- senha do GRUB, que deve usar hash gerado previamente
-
-Nesses casos, o script pode registrar `INFO`, `SKIP` ou `WARN`, e a decisao final deve seguir o baseline e a politica do ambiente.
-
-## Senha do GRUB Legacy
-
-O controle de senha do GRUB aceita remediacao automatica somente quando um hash MD5 ja foi gerado com `grub-md5-crypt`.
-
-Exemplo:
+Aplicacao completa, quando aprovada:
 
 ```bash
-export GRUB_MD5_PASSWORD='$1$hash-gerado'
-./REMED_SH/49-51.sh
+./executor.sh full
 ```
 
-Sem essa variavel, o script nao grava senha em claro e trata o item como orientacao/manual.
+## Cuidados Tecnicos
+
+Algumas remediacoes sao conservadoras por seguranca operacional:
+
+- SELinux: o script pode ajustar configuracao persistente, mas nao deve forcar mudanca de estado em runtime sem validacao de contexto/relabel.
+- DHCP: o controle mira servidor DHCP (`dhcpd`/pacote de servidor), sem remover componentes necessarios ao cliente de rede.
+- SSH e firewall: qualquer endurecimento deve preservar acesso administrativo previsto ou contar com console de recuperacao.
+- GRUB Legacy: senha automatica exige hash em `GRUB_MD5_PASSWORD`; senha em claro nao deve ser gravada.
+- AIDE, SUID/SGID, ForceCommand/Chroot, servicos expostos e controles MAC podem exigir analise manual conforme funcao do servidor.
 
 ## Logs e Evidencias
 
-Arquivos de log, evidencias de desenvolvimento e saidas locais nao devem ser versionados. O `.gitignore` ignora, entre outros:
+O executor gera saidas em:
 
 ```text
-logs/
-*.log
-*.jpg
-*.png
-execucao_completa.txt
-*.bkp_*
-*.bak.*
-*.tmp
+logs/audit/
+logs/remed/
+logs/json/
 ```
 
-Se algum log ou evidencia precisar ser preservado, guarde fora do versionamento ou documente explicitamente a excecao.
+Esses arquivos sao evidencias de execucao e devem seguir o processo interno de armazenamento do ambiente. Por padrao, logs gerados, imagens, backups temporarios e saidas locais ficam fora do versionamento.
