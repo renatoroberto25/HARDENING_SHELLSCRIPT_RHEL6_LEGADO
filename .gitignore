@@ -1,5 +1,8 @@
 # Runtime logs and execution outputs
 logs/*
+!logs/
+!logs/index.html
+!logs/manifest.json
 execucao_completa.txt
 EXECUCAO_COMPLETA.txt
 EXECUÇÃO_COMPLETA.txt
@@ -22,3 +25,5 @@ Thumbs.db
 .swo
 .vscode/
 .idea/
+.agents/
+.codex/

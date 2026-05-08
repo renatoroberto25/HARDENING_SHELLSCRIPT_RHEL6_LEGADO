@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+
+<title>HARDENING RHEL6</title>
+
+<style>
+
+body{
+    background:#111;
+    color:#eee;
+    font-family:Arial,Helvetica,sans-serif;
+    margin:20px;
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+select{
+    background:#1c1c1c;
+    color:#fff;
+    border:1px solid #444;
+    padding:10px;
+    margin-bottom:20px;
+    min-width:500px;
+}
+
+.cards{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.card{
+    background:#1c1c1c;
+    border:1px solid #333;
+    padding:15px;
+    min-width:160px;
+}
+
+.card-title{
+    font-size:13px;
+    color:#aaa;
+    margin-bottom:10px;
+}
+
+.card-value{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.pass{
+    color:#4caf50;
+}
+
+.fail{
+    color:#f44336;
+}
+
+.check{
+    color:#ff9800;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#1f1f1f;
+    border:1px solid #333;
+    padding:10px;
+    text-align:left;
+}
+
+td{
+    border:1px solid #333;
+    padding:8px;
+}
+
+tr:hover{
+    background:#1b1b1b;
+}
+
+.status-pass{
+    color:#4caf50;
+    font-weight:bold;
+}
+
+.status-fail{
+    color:#f44336;
+    font-weight:bold;
+}
+
+.status-check{
+    color:#ff9800;
+    font-weight:bold;
+}
+
+.info{
+    margin-bottom:20px;
+    line-height:1.8;
+    color:#bbb;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>HARDENING RHEL6</h1>
+
+<select id="auditSelect"></select>
+
+<div class="info">
+    <strong>Audit:</strong>
+    <span id="auditFile"></span>
+</div>
+
+<div class="cards">
+
+    <div class="card">
+        <div class="card-title">TOTAL</div>
+        <div class="card-value" id="total">0</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">PASS</div>
+        <div class="card-value pass" id="pass">0</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">FAIL</div>
+        <div class="card-value fail" id="fail">0</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">CHECK</div>
+        <div class="card-value check" id="check">0</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">ADERÊNCIA</div>
+        <div class="card-value" id="aderencia">0%</div>
+    </div>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+    <th>ID</th>
+    <th>DOMÍNIO</th>
+    <th>PERFIL</th>
+    <th>CRITICIDADE</th>
+    <th>DESCRIÇÃO</th>
+    <th>STATUS</th>
+</tr>
+</thead>
+
+<tbody id="tbody"></tbody>
+
+</table>
+
+<script>
+
+async function loadManifest(){
+
+    const response = await fetch("manifest.json")
+    const manifest = await response.json()
+
+    const select = document.getElementById("auditSelect")
+
+    manifest.audits.forEach(file => {
+
+        const option = document.createElement("option")
+
+        option.value = file
+        option.textContent = file
+
+        select.appendChild(option)
+    })
+
+    if(manifest.audits.length > 0){
+        loadAudit(manifest.audits[0])
+    }
+
+    select.addEventListener("change", function(e){
+        loadAudit(e.target.value)
+    })
+}
+
+async function loadAudit(file){
+
+    const response = await fetch("json/" + file)
+    const data = await response.json()
+
+    document.getElementById("auditFile").textContent = file
+
+    document.getElementById("total").textContent = data.total
+    document.getElementById("pass").textContent = data.pass
+    document.getElementById("fail").textContent = data.fail
+    document.getElementById("check").textContent = data.check
+    document.getElementById("aderencia").textContent = data.aderencia + "%"
+
+    const tbody = document.getElementById("tbody")
+
+    tbody.innerHTML = ""
+
+    data.items.forEach(item => {
+
+        let statusClass = ""
+
+        if(item.status === "PASS"){
+            statusClass = "status-pass"
+        }
+        else if(item.status === "FAIL"){
+            statusClass = "status-fail"
+        }
+        else{
+            statusClass = "status-check"
+        }
+
+        const tr = document.createElement("tr")
+
+        tr.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.dominio}</td>
+            <td>${item.perfil}</td>
+            <td>${item.criticidade}</td>
+            <td>${item.descricao}</td>
+            <td class="${statusClass}">${item.status}</td>
+        `
+
+        tbody.appendChild(tr)
+    })
+}
+
+loadManifest()
+
+</script>
+
+</body>
+</html>
