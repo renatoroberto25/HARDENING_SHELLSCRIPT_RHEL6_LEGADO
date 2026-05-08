@@ -184,8 +184,7 @@
 183;Legado;Full;Alta;SMBv1 controlado;Desabilitar ou justificar SMBv1 em servidores Samba.;Verificar configuração min protocol no Samba quando aplicável
 184;Legado;Full;Alta;NFS inseguro controlado;Identificar exports NFS inseguros como no_root_squash ou rw amplo.;Verificar /etc/exports
 185;Legado;Light;Alta;Serviços expostos revisados;Identificar listeners TCP UDP não autorizados.;Verificar portas em escuta com netstat
-186;Legado;Full;Média;Compiladores em produção;Remover ou justificar gcc make e ferramentas de build em produção.;Verificar pacotes de compilação instalados
-187;Legado;Light;Alta;SELinux ativo ou justificado;Manter SELinux enforcing/permissive conforme política ou registrar exceção se disabled.;Verificar estado SELinux
+186;Legado;Full;Média;Compiladores controlados;Remover ou justificar compiladores em produção.;Verificar presença de gcc make gcc-c++
 188;Legado;Light;Alta;Repositórios órfãos;Identificar repositórios não oficiais ou sem suporte.;Verificar arquivos em /etc/yum.repos.d
 189;Legado;Full;Alta;Java legado exposto;Identificar Java antigo associado a serviços expostos.;Verificar versões Java e processos associados
 190;Sistema;Light;Alta;Permissões de /etc/gshadow;Garantir permissões restritas no /etc/gshadow.;Verificar permissões de /etc/gshadow

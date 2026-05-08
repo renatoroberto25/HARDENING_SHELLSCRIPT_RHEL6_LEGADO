@@ -555,8 +555,8 @@ echo -e "\n184;Legado;Full;Alta;NFS inseguro controlado;"
 echo -e "\n185;Legado;Light;Alta;Serviços expostos revisados;"
 (netstat -tuln 2>/dev/null | tail -n +3 | wc -l | awk '{if($1>0) print "CHECK"; else print "PASS"}')
 
-echo -e "\n186;Legado;Full;Média;Compiladores em produção;"
-(! rpm -qa 2>/dev/null | grep -qEo '^(gcc|make|gcc-c\+\+)') && echo "PASS" || echo "FAIL"
+echo -e "\n186;Legado;Full;Média;Compiladores restritos;"
+(for bin in /usr/bin/gcc /usr/bin/g++ /usr/bin/cc /usr/bin/make /usr/bin/ld; do [ -f "$bin" ] && stat -Lc "%a %G" "$bin"; done | grep -qvE '^750 compilers$' && echo "FAIL" || echo "PASS")
 
 echo -e "\n187;Legado;Light;Alta;SELinux ativo ou justificado;"
 (getenforce 2>/dev/null | grep -qE 'Enforcing|Permissive' || [ ! -e /etc/selinux/config ]) && echo "PASS" || echo "FAIL"
