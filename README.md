@@ -51,8 +51,6 @@ Esse formato permite correlacionar diretamente log, evidencia, controle e linha 
 ```text
 AUDIT_SH/
   1_190_rhel6.sh      Audit consolidado dos controles RHEL6
-  LISTA               Arquivo auxiliar
-  REGEX               Arquivo auxiliar
 
 REMED_SH/
   *.sh                Remediacoes por faixa de controles
